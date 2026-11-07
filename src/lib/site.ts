@@ -18,7 +18,7 @@ export const site: {
     "We design and develop high-performance websites, web applications and digital solutions that help South African businesses stand out, connect with customers and grow online.",
 
   // Public contact details. Phone and WhatsApp stay hidden while empty.
-  email: "digitalsolutionswc@gmail.com",
+  email: "digital.solutions.wc@gmail.com",
   phone: "", // e.g. "071 234 5678"
   whatsapp: "", // international format without "+", e.g. "27712345678"
 
