@@ -18,7 +18,7 @@ services, projects, reasons, process steps and the tech stack. Empty values (`""
 
 ### Project screenshots
 
-Until you add your own, the Work section shows a live screenshot of each site.
+Project screenshots live in public/work (real phone screenshots of each live site).
 For the best look, add full-page screenshots:
 
 1. Open the site in Chrome, press `F12`, then `Ctrl+Shift+P` and run **Capture full size screenshot**.

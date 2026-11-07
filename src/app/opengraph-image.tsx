@@ -17,20 +17,20 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 72,
-          background: "radial-gradient(circle at 85% 30%, #26357f 0%, #07080a 55%)",
-          color: "#eeece6",
+          background: "#f1eee7",
+          color: "#141413",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 30 }}>
-          <div style={{ width: 18, height: 18, borderRadius: 9, background: "#4f6dff" }} />
+          <div style={{ width: 18, height: 18, borderRadius: 9, background: "#e8492a" }} />
           <span>{site.name}</span>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", fontSize: 92, fontWeight: 800, lineHeight: 0.95, letterSpacing: -3 }}>
-          <span>WE BUILD DIGITAL</span>
-          <span>EXPERIENCES THAT</span>
-          <span style={{ color: "#4f6dff" }}>MOVE BUSINESSES.</span>
+        <div style={{ display: "flex", flexDirection: "column", fontSize: 84, fontWeight: 700, lineHeight: 0.95, letterSpacing: -4 }}>
+          <span>Websites that make your</span>
+          <span>business look as good</span>
+          <span style={{ color: "#e8492a" }}>as it really is.</span>
         </div>
-        <div style={{ display: "flex", fontSize: 26, color: "#8a8f99" }}>{`Websites · Online stores · Web applications · ${site.location}`}</div>
+        <div style={{ display: "flex", fontSize: 26, color: "#77736b" }}>{`Websites · Online stores · Web applications · ${site.location}`}</div>
       </div>
     ),
     size,

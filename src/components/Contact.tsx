@@ -1,11 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle, ArrowUpRight, Check, Loader2, Mail, MessageCircle, Phone } from "lucide-react";
+import { AlertCircle, ArrowRight, Check, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { validateEnquiry, type Enquiry, type EnquiryErrors } from "@/lib/enquiry";
 import { budgetOptions, serviceOptions, site } from "@/lib/site";
-import { Eyebrow, Reveal } from "./ui";
+import { Label, Reveal } from "./ui";
 
 const empty: Enquiry = { name: "", business: "", email: "", phone: "", service: "", message: "", budget: "" };
 type Status = "idle" | "sending" | "sent" | "error";
@@ -17,11 +17,10 @@ export default function Contact() {
   const [serverError, setServerError] = useState("");
   const [honeypot, setHoneypot] = useState("");
 
-  // One change handler for every field: uses the input's name to update the right key.
+  // One handler for every field: the input's "name" decides which value to update.
   function update(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
     setData((d) => ({ ...d, [name]: value }));
-    // Clear a field's error as soon as the visitor starts fixing it.
     if (errors[name as keyof Enquiry]) setErrors((er) => ({ ...er, [name]: undefined }));
   }
 
@@ -30,12 +29,10 @@ export default function Contact() {
     const found = validateEnquiry(data);
     setErrors(found);
     if (Object.keys(found).length) {
-      // Move focus to the first broken field so keyboard and screen-reader users land on it.
-      const first = Object.keys(found)[0];
-      document.getElementById(`f-${first}`)?.focus();
+      // Jump to the first field that needs fixing.
+      document.getElementById(`f-${Object.keys(found)[0]}`)?.focus();
       return;
     }
-
     setStatus("sending");
     setServerError("");
     try {
@@ -60,61 +57,77 @@ export default function Contact() {
   const waLink = site.whatsapp ? `https://wa.me/${site.whatsapp}` : "";
 
   return (
-    <section id="contact" className="relative border-t border-line py-28 sm:py-36">
+    <section id="contact" className="bg-ink py-24 text-paper sm:py-32">
       <div className="mx-auto grid max-w-7xl gap-16 px-5 sm:px-8 lg:grid-cols-12">
         <Reveal className="lg:col-span-5">
-          <Eyebrow index="06">Start a project</Eyebrow>
-          <h2 className="display mt-6 text-[clamp(2.5rem,6vw,5.5rem)]">
-            Tell us what you&apos;re{" "}
-            <span className="font-serif font-normal normal-case italic text-volt" style={{ fontStretch: "100%" }}>
-              building
-            </span>
+          <Label dark>Start a project</Label>
+          <h2 className="headline mt-5 text-[clamp(2.4rem,4.6vw,4.2rem)]">
+            Let&apos;s build something that sets your business <span className="text-signal">apart.</span>
           </h2>
-          <p className="mt-6 max-w-md text-lg leading-relaxed text-mute">
-            Share a few details about your business and your project. We&apos;ll get back to you personally to talk through
-            the next steps. No obligation.
+          <p className="mt-8 max-w-md text-lg leading-relaxed text-paper/65">
+            Whether you need a professional website, an online store or a custom digital solution, let&apos;s turn your idea
+            into something exceptional. Tell us a bit about it and we&apos;ll get back to you personally.
           </p>
 
-          <ul className="mt-10 space-y-3">
+          <dl className="mt-12 space-y-6 border-t border-line-dark pt-8">
             {site.email && (
-              <ContactLine icon={<Mail className="h-4 w-4" />} label="Email" href={`mailto:${site.email}`} value={site.email} />
+              <div>
+                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-paper/45">Email</dt>
+                <dd className="mt-1.5">
+                  <a href={`mailto:${site.email}`} className="link-line font-display text-xl font-medium tracking-tight sm:text-2xl">
+                    {site.email}
+                  </a>
+                </dd>
+              </div>
             )}
             {site.phone && (
-              <ContactLine icon={<Phone className="h-4 w-4" />} label="Phone" href={`tel:${site.phone.replace(/\s/g, "")}`} value={site.phone} />
+              <div>
+                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-paper/45">Phone</dt>
+                <dd className="mt-1.5">
+                  <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="link-line font-display text-xl font-medium sm:text-2xl">
+                    {site.phone}
+                  </a>
+                </dd>
+              </div>
             )}
-            {waLink && <ContactLine icon={<MessageCircle className="h-4 w-4" />} label="WhatsApp" href={waLink} value="Chat with us" />}
-          </ul>
+            {waLink && (
+              <div>
+                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-paper/45">WhatsApp</dt>
+                <dd className="mt-1.5">
+                  <a href={waLink} target="_blank" rel="noopener noreferrer" className="link-line font-display text-xl font-medium sm:text-2xl">
+                    Send us a message
+                  </a>
+                </dd>
+              </div>
+            )}
+          </dl>
         </Reveal>
 
         <Reveal delay={0.1} className="lg:col-span-7">
-          <div className="relative overflow-hidden rounded-2xl border border-line bg-ink-2 p-6 sm:p-10">
+          <div className="relative rounded-[1.5rem] bg-paper p-6 text-ink sm:p-10">
             <AnimatePresence mode="wait">
               {status === "sent" ? (
                 <motion.div
                   key="sent"
                   role="status"
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="flex min-h-[28rem] flex-col items-center justify-center text-center"
+                  className="flex min-h-[30rem] flex-col items-start justify-center"
                 >
-                  <span className="grid h-16 w-16 place-items-center rounded-full bg-volt text-white shadow-[0_0_40px_rgba(79,109,255,0.7)]">
-                    <Check className="h-7 w-7" />
+                  <span className="grid h-14 w-14 place-items-center rounded-full bg-signal text-white">
+                    <Check className="h-6 w-6" />
                   </span>
-                  <h3 className="display mt-8 text-4xl">Enquiry sent</h3>
-                  <p className="mt-4 max-w-sm leading-relaxed text-mute">
-                    Thanks for reaching out. We&apos;ve received your project details and will be in touch soon.
+                  <h3 className="headline mt-8 text-4xl">Thanks, we&apos;ve got it.</h3>
+                  <p className="mt-4 max-w-sm leading-relaxed text-soft">
+                    Your enquiry has been sent. We&apos;ll read it properly and get back to you soon.
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => setStatus("idle")}
-                    className="mt-8 rounded-full border border-line px-5 py-2.5 text-sm text-mute transition-colors hover:text-bone"
-                  >
+                  <button type="button" onClick={() => setStatus("idle")} className="link-line mt-8 font-medium">
                     Send another enquiry
                   </button>
                 </motion.div>
               ) : (
-                <motion.form key="form" noValidate onSubmit={submit} exit={{ opacity: 0 }} className="grid gap-6 sm:grid-cols-2">
+                <motion.form key="form" noValidate onSubmit={submit} exit={{ opacity: 0 }} className="grid gap-x-6 gap-y-7 sm:grid-cols-2">
                   <Field id="name" label="Full name" error={errors.name} required>
                     <input id="f-name" name="name" autoComplete="name" value={data.name} onChange={update} {...a11y("name", errors)} className={inputCls(errors.name)} />
                   </Field>
@@ -122,10 +135,10 @@ export default function Contact() {
                     <input id="f-business" name="business" autoComplete="organization" value={data.business} onChange={update} {...a11y("business", errors)} className={inputCls(errors.business)} />
                   </Field>
                   <Field id="email" label="Email address" error={errors.email} required>
-                    <input id="f-email" name="email" type="email" autoComplete="email" inputMode="email" value={data.email} onChange={update} {...a11y("email", errors)} className={inputCls(errors.email)} />
+                    <input id="f-email" name="email" type="email" inputMode="email" autoComplete="email" value={data.email} onChange={update} {...a11y("email", errors)} className={inputCls(errors.email)} />
                   </Field>
                   <Field id="phone" label="Phone number" optional error={errors.phone}>
-                    <input id="f-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" value={data.phone} onChange={update} {...a11y("phone", errors)} className={inputCls(errors.phone)} />
+                    <input id="f-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" value={data.phone} onChange={update} {...a11y("phone", errors)} className={inputCls(errors.phone)} />
                   </Field>
                   <Field id="service" label="What service are you interested in?" error={errors.service} required>
                     <select id="f-service" name="service" value={data.service} onChange={update} {...a11y("service", errors)} className={inputCls(errors.service)}>
@@ -149,7 +162,7 @@ export default function Contact() {
                     <textarea
                       id="f-message"
                       name="message"
-                      rows={5}
+                      rows={4}
                       value={data.message}
                       onChange={update}
                       placeholder="What does your business do, and what would you like to build?"
@@ -158,7 +171,7 @@ export default function Contact() {
                     />
                   </Field>
 
-                  {/* Honeypot: hidden from people and screen readers, catches spam bots. */}
+                  {/* Honeypot: hidden from people, catches spam bots that fill in every field. */}
                   <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
                     <label>
                       Website
@@ -167,13 +180,13 @@ export default function Contact() {
                   </div>
 
                   {status === "error" && (
-                    <div role="alert" className="flex gap-3 rounded-xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200 sm:col-span-2">
+                    <div role="alert" className="flex gap-3 rounded-xl bg-signal/10 p-4 text-sm text-[#9b2a14] sm:col-span-2">
                       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                       <p>
                         {serverError}{" "}
                         {site.email && (
                           <>
-                            You can also email us directly at{" "}
+                            You can also email us at{" "}
                             <a href={`mailto:${site.email}`} className="underline underline-offset-2">
                               {site.email}
                             </a>
@@ -184,12 +197,12 @@ export default function Contact() {
                     </div>
                   )}
 
-                  <div className="flex flex-col items-start justify-between gap-4 sm:col-span-2 sm:flex-row sm:items-center">
-                    <p className="text-xs text-dim">Fields marked * are required.</p>
+                  <div className="flex flex-col-reverse items-start justify-between gap-4 sm:col-span-2 sm:flex-row sm:items-center">
+                    <p className="text-xs text-mute">* Required</p>
                     <button
                       type="submit"
                       disabled={status === "sending"}
-                      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-volt px-7 py-4 font-medium text-white shadow-[0_10px_40px_-10px_rgba(79,109,255,0.8)] transition-colors hover:bg-[#6280ff] disabled:cursor-wait disabled:opacity-70 sm:w-auto"
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-7 py-4 font-medium text-paper transition-colors hover:bg-signal disabled:cursor-wait disabled:opacity-70 sm:w-auto"
                     >
                       {status === "sending" ? (
                         <>
@@ -197,8 +210,8 @@ export default function Contact() {
                         </>
                       ) : (
                         <>
-                          Send Enquiry
-                          <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                          Start Your Project
+                          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                         </>
                       )}
                     </button>
@@ -213,12 +226,13 @@ export default function Contact() {
   );
 }
 
+// Underlined fields (like a paper form) instead of boxes.
 const inputCls = (err?: string) =>
-  `w-full rounded-xl border bg-ink px-4 py-3.5 text-bone placeholder:text-dim transition-colors focus:outline-none focus-visible:outline-none focus:ring-2 ${
-    err ? "border-red-400/60 focus:ring-red-400/40" : "border-line hover:border-white/20 focus:border-volt focus:ring-volt/30"
+  `w-full border-0 border-b bg-transparent px-0 py-2.5 text-lg text-ink placeholder:text-mute/70 transition-colors focus:outline-none focus-visible:outline-none ${
+    err ? "border-[#c0391f]" : "border-ink/25 hover:border-ink/50 focus:border-ink"
   }`;
 
-// Links each input to its error message for screen readers.
+// Connects each field to its error message for screen readers.
 const a11y = (name: keyof Enquiry, errors: EnquiryErrors) => ({
   "aria-invalid": errors[name] ? true : undefined,
   "aria-describedby": errors[name] ? `e-${name}` : undefined,
@@ -243,32 +257,17 @@ function Field({
 }) {
   return (
     <div className={wide ? "sm:col-span-2" : ""}>
-      <label htmlFor={`f-${id}`} className="mb-2 block text-sm text-mute">
+      <label htmlFor={`f-${id}`} className="block text-sm font-medium text-soft">
         {label}
-        {required && <span className="text-volt"> *</span>}
-        {optional && <span className="text-dim"> (optional)</span>}
+        {required && <span className="text-signal"> *</span>}
+        {optional && <span className="font-normal text-mute"> (optional)</span>}
       </label>
       {children}
       {error && (
-        <p id={`e-${id}`} className="mt-2 flex items-center gap-1.5 text-xs text-red-300">
-          <AlertCircle className="h-3.5 w-3.5" /> {error}
+        <p id={`e-${id}`} className="mt-2 text-xs text-[#c0391f]">
+          {error}
         </p>
       )}
     </div>
-  );
-}
-
-function ContactLine({ icon, label, href, value }: { icon: React.ReactNode; label: string; href: string; value: string }) {
-  return (
-    <li>
-      <a href={href} className="group flex items-center gap-4 rounded-xl border border-line p-4 transition-colors hover:border-white/20">
-        <span className="grid h-10 w-10 place-items-center rounded-full bg-ink-3 text-volt">{icon}</span>
-        <span className="min-w-0 flex-1">
-          <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-dim">{label}</span>
-          <span className="block truncate text-bone">{value}</span>
-        </span>
-        <ArrowUpRight className="h-4 w-4 text-mute transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-      </a>
-    </li>
   );
 }

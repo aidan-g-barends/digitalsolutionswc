@@ -1,112 +1,75 @@
 @import "tailwindcss";
 
-/* Design tokens. Tailwind v4 turns these into classes like bg-ink, text-volt, font-display. */
+/* Design tokens: warm paper, near-black ink and one signal colour, like good print. */
 @theme {
-  --color-ink: #07080a;
-  --color-ink-2: #0c0e11;
-  --color-ink-3: #13161b;
-  --color-bone: #eeece6;
-  --color-mute: #8a8f99;
-  --color-dim: #565b64;
-  --color-line: rgb(255 255 255 / 0.08);
-  --color-volt: #4f6dff;
-  --color-volt-soft: #93a4ff;
+  --color-paper: #f1eee7;
+  --color-paper-2: #e7e2d7;
+  --color-ink: #141413;
+  --color-ink-2: #1d1d1b;
+  --color-soft: #4a4843;
+  --color-mute: #77736b;
+  --color-line: rgb(20 20 19 / 0.12);
+  --color-line-dark: rgb(241 238 231 / 0.14);
+  --color-signal: #e8492a;
 
   --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
-
-  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-
-  --animate-marquee: marquee 40s linear infinite;
-  --animate-pulse-dot: pulse-dot 2s ease-out infinite;
-
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-  @keyframes pulse-dot {
-    0% { box-shadow: 0 0 0 0 rgb(95 208 140 / 0.6); }
-    100% { box-shadow: 0 0 0 10px rgb(95 208 140 / 0); }
-  }
 }
 
 html {
   scroll-behavior: smooth;
-  background: var(--color-ink);
-  color-scheme: dark;
+  background: var(--color-paper);
 }
 
 body {
-  background: var(--color-ink);
-  color: var(--color-bone);
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Sections land below the fixed navbar when you jump to them. */
 section[id] {
-  scroll-margin-top: 5rem;
+  scroll-margin-top: 4.5rem;
 }
 
 ::selection {
-  background: var(--color-volt);
+  background: var(--color-signal);
   color: white;
 }
 
-/* Visible keyboard focus everywhere (accessibility), hidden for mouse clicks. */
 :focus-visible {
-  outline: 2px solid var(--color-volt);
+  outline: 2px solid var(--color-signal);
   outline-offset: 3px;
   border-radius: 4px;
 }
 
-/* Condensed, heavy display type used for the big headlines. */
-.display {
+/* Headlines: sentence case, tight, confident. No shouting. */
+.headline {
   font-family: var(--font-display);
-  font-stretch: 78%;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.035em;
-  line-height: 0.9;
-  text-transform: uppercase;
+  line-height: 0.98;
+  text-wrap: balance;
 }
 
-/* Hollow text used for the big numbers and marquees. */
-/* (A faint gradient fill instead of a stroke, because variable fonts have
-   overlapping outlines that show up as messy lines when stroked.) */
-.outline-text {
-  color: transparent;
-  background-image: linear-gradient(to bottom, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.015));
-  -webkit-background-clip: text;
-  background-clip: text;
+/* Underline that draws in from the left on hover. */
+.link-line {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-/* Film grain over the whole site. Adds texture so the black never looks flat. */
-.grain::after {
-  content: "";
-  position: fixed;
-  inset: -50%;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.06;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* Faint blueprint grid used behind a few sections. */
-.blueprint {
-  background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
-  background-size: 64px 64px;
+.link-line:hover {
+  background-size: 100% 1px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }

@@ -7,7 +7,7 @@
 
 export const site: {
   name: string; shortName: string; location: string; description: string;
-  email: string; phone: string; whatsapp: string;
+  email: string; phone: string; whatsapp: string; founder: string;
   socials: { label: string; href: string }[];
 } = {
   name: "Digital Solutions WC",
@@ -21,6 +21,7 @@ export const site: {
   email: "digital.solutions.wc@gmail.com",
   phone: "", // e.g. "071 234 5678"
   whatsapp: "", // international format without "+", e.g. "27712345678"
+  founder: "Aidan Barends",
 
   // Social links. Any link left as "" is not shown on the site.
   socials: [
@@ -32,111 +33,111 @@ export const site: {
 };
 
 export const navLinks = [
-  { label: "Services", href: "#services" },
   { label: "Work", href: "#work" },
+  { label: "Services", href: "#services" },
+  { label: "About", href: "#about" },
   { label: "Process", href: "#process" },
-  { label: "Stack", href: "#stack" },
-  { label: "Contact", href: "#contact" },
-];
-
-export type Glyph = "web" | "shop" | "app" | "mobile" | "uiux" | "redesign";
+]
 
 export const services: {
   title: string;
   short: string;
   description: string;
-  tags: string[];
-  glyph: Glyph;
+  goodFor: string;
 }[] = [
   {
     title: "Website Development",
     short: "Websites",
     description:
       "Professional, responsive and high-performance websites designed to establish credibility, attract customers and grow your business.",
-    tags: ["Responsive", "SEO-ready", "Fast loading"],
-    glyph: "web",
+    goodFor: "Service businesses, professionals and new brands",
   },
   {
     title: "E-commerce Development",
     short: "Online stores",
     description:
       "Online stores that provide seamless shopping experiences, showcase products beautifully and help your business sell online.",
-    tags: ["Product pages", "Secure checkout", "Mobile-first"],
-    glyph: "shop",
+    goodFor: "Brands that want to sell products online",
   },
   {
     title: "Web Application Development",
     short: "Web apps",
     description:
       "Custom web applications designed around your specific business requirements, workflows and operational needs.",
-    tags: ["Custom logic", "Dashboards", "Databases"],
-    glyph: "app",
+    goodFor: "Bookings, dashboards and internal tools",
   },
   {
     title: "Mobile & Application Development",
     short: "Applications",
     description:
       "Tailored application experiences and software solutions that solve real-world problems for your business and your customers.",
-    tags: ["Tailored", "Cross-device", "Practical"],
-    glyph: "mobile",
+    goodFor: "Customer portals and tools people use daily",
   },
   {
     title: "UI/UX Design",
     short: "UI/UX",
     description:
       "Modern, intuitive and user-focused interfaces that make digital products easier and more enjoyable to use.",
-    tags: ["User flows", "Interfaces", "Prototypes"],
-    glyph: "uiux",
+    goodFor: "Products that need to be easier to use",
   },
   {
     title: "Website Redesign & Optimisation",
     short: "Redesigns",
     description:
       "Transform an outdated website into a modern, responsive and professionally designed digital experience.",
-    tags: ["Modernise", "Speed up", "Convert better"],
-    glyph: "redesign",
+    goodFor: "Sites that look dated or don't bring in enquiries",
   },
 ];
 
 export type Project = {
   title: string;
-  client: string;
   category: string;
   url: string;
   domain: string;
-  description: string;
-  highlights: string[];
-  // Your own screenshot in /public/projects (best quality). While this is "",
-  // the site shows a live screenshot of the real website instead.
-  screenshot: string;
-  // Accent colour used for this project's glow and details.
-  accent: string;
+  about: string;
+  built: string;
+  scope: string[];
+  stack?: string;
+  // Real screenshots of the live site, taken on a phone (in /public/work).
+  screens: { src: string; alt: string }[];
+  // The client's own brand colours, so each case study looks like their brand.
+  colors: { bg: string; ink: string; accent: string };
 };
 
 export const projects: Project[] = [
   {
     title: "Ivy & Hold",
-    client: "Ivy & Hold",
-    category: "E-commerce Development",
+    category: "E-commerce",
     url: "https://www.ivyhold.co.za/",
     domain: "ivyhold.co.za",
-    description:
-      "A custom online store for Ivy & Hold, a South African brand selling stylish handbags and accessories. Built as a fast, mobile-first shopping experience, connected to Shopify for products, stock and secure checkout.",
-    highlights: ["Custom storefront", "Shopify integration", "Mobile-first"],
-    screenshot: "",
-    accent: "#d6a77a",
+    about: "Ivy & Hold is a South African brand selling vegan leather handbags.",
+    built:
+      "We designed and built a custom storefront that feels premium on a phone, connected to Shopify for products and stock, with Yoco payments at checkout.",
+    scope: ["Storefront design & build", "Shopify integration", "Yoco checkout", "Customer reviews with photos", "SEO & Meta Pixel setup"],
+    stack: "React · Shopify · Supabase · Vercel",
+    screens: [
+      { src: "/work/ivy-home.webp", alt: "Ivy & Hold home page on a phone" },
+      { src: "/work/ivy-product.webp", alt: "Ivy & Hold product page with add to bag button" },
+      { src: "/work/ivy-picks.webp", alt: "Ivy & Hold product picks section" },
+    ],
+    colors: { bg: "#efe7dc", ink: "#2c2a25", accent: "#5b6b4a" },
   },
   {
-    title: "JJS Bussol",
-    client: "JJS Business Solutions",
-    category: "Business Website",
+    title: "JJS Business Solutions",
+    category: "Business website",
     url: "https://jjsbussol.co.za/",
     domain: "jjsbussol.co.za",
-    description:
-      "A business website for JJS Business Solutions, built to give the company a professional online presence and clearly communicate its services to potential customers.",
-    highlights: ["Corporate presence", "Clear service pages", "Custom domain"],
-    screenshot: "",
-    accent: "#5fd0c0",
+    about:
+      "JJS Business Solutions is an accredited skills development provider in Langebaan, delivering training, consulting and projects across South Africa.",
+    built:
+      "We built a site that presents their three service areas and credentials clearly, and makes it easy for organisations to enquire.",
+    scope: ["Website design & build", "Service & credential pages", "Enquiry & WhatsApp contact", "SEO setup", "Launch on the client's domain"],
+    screens: [
+      { src: "/work/jjs-home.webp", alt: "JJS Business Solutions home page on a phone" },
+      { src: "/work/jjs-about.webp", alt: "JJS Business Solutions credentials section" },
+      { src: "/work/jjs-trusted.webp", alt: "JJS Business Solutions trusted-by section" },
+    ],
+    colors: { bg: "#e3eadc", ink: "#1f2a1c", accent: "#46703e" },
   },
 ];
 

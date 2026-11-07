@@ -1,113 +1,156 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { services, site } from "@/lib/site";
-import SignalField from "./SignalField";
-import { MagneticLink } from "./ui";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowDown, ArrowRight } from "lucide-react";
+import { useRef } from "react";
+import { projects } from "@/lib/site";
+import { LocalTime, Phone } from "./ui";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-// Each item is one word of the headline. "serif" words get the italic accent treatment.
-const headline: { text: string; serif?: boolean }[] = [
-  { text: "We" },
-  { text: "build" },
-  { text: "digital" },
-  { text: "experiences" },
-  { text: "that" },
-  { text: "move", serif: true },
-  { text: "businesses" },
-  { text: "forward." },
-];
-
 export default function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  // The two phones drift apart slightly as you scroll, giving a bit of depth.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const backY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const frontY = useTransform(scrollYProgress, [0, 1], [0, 70]);
+  const [ivy, jjs] = projects;
+
   return (
-    <section id="top" className="relative flex min-h-[100svh] flex-col overflow-hidden pt-28">
-      {/* Background layers: dot field, faded at the edges, plus a soft blue glow. */}
-      <SignalField className="absolute inset-0 h-full w-full [mask-image:radial-gradient(ellipse_80%_70%_at_60%_40%,black,transparent)]" />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-40 top-1/3 h-[38rem] w-[38rem] rounded-full bg-volt/20 blur-[140px]"
-      />
-
-      <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-5 sm:px-8">
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease }}
-          className="mb-8 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-mute"
-        >
-          <span className="h-2 w-2 animate-pulse-dot rounded-full bg-[#5fd08c]" aria-hidden />
-          Web studio · {site.location}
-        </motion.p>
-
-        {/* Each word slides up from behind a mask, one after another. */}
-        <h1 className="display max-w-[17ch] text-[clamp(3rem,8.6vw,8.75rem)]">
-          {headline.map((w, i) => (
-            <span key={i} className="mr-[0.22em] inline-block overflow-hidden pb-[0.06em] align-bottom last:mr-0">
-              <motion.span
-                className={`inline-block ${
-                  w.serif ? "font-serif text-[1.08em] font-normal normal-case italic tracking-[-0.02em] text-volt" : ""
-                }`}
-                style={w.serif ? { fontStretch: "100%" } : undefined}
-                initial={{ y: "110%" }}
-                animate={{ y: "0%" }}
-                transition={{ duration: 1.1, delay: 0.3 + i * 0.07, ease }}
-              >
-                {w.text}
-              </motion.span>
+    <section id="top" ref={ref} className="relative overflow-hidden pt-28 sm:pt-32">
+      <div className="mx-auto grid max-w-7xl gap-14 px-5 pb-20 sm:px-8 lg:grid-cols-12 lg:gap-8 lg:pb-28">
+        <div className="lg:col-span-7 lg:pt-10">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[12px] text-mute"
+          >
+            <span className="inline-flex items-center gap-2 text-ink">
+              <span className="h-2 w-2 rounded-full bg-[#2f9e5b]" aria-hidden />
+              Taking on new projects
             </span>
-          ))}
-        </h1>
+            <span aria-hidden>/</span>
+            <span>
+              Langebaan, <LocalTime />
+            </span>
+          </motion.p>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-12 lg:items-end">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.15, ease }}
+            className="headline mt-7 max-w-[13ch] text-[clamp(2.8rem,6.4vw,5.6rem)]"
+          >
+            Websites that make your business look as good as it{" "}
+            <span className="relative whitespace-nowrap">
+              really is
+              {/* Hand-drawn style underline, drawn in after the headline appears. */}
+              <svg aria-hidden viewBox="0 0 300 20" preserveAspectRatio="none" className="absolute -bottom-2 left-0 h-[0.22em] w-full text-signal">
+                <motion.path
+                  d="M3 14 C 70 4, 150 4, 297 10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.9, delay: 0.9, ease }}
+                />
+              </svg>
+            </span>
+            .
+          </motion.h1>
+
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1, ease }}
-            className="max-w-xl text-lg leading-relaxed text-mute sm:text-xl lg:col-span-6"
+            transition={{ duration: 0.9, delay: 0.35, ease }}
+            className="mt-8 max-w-xl text-lg leading-relaxed text-soft sm:text-xl"
           >
-            We design and develop high-performance websites, web applications and digital solutions that help
-            businesses <span className="text-bone">stand out</span>, <span className="text-bone">connect with customers</span>{" "}
-            and <span className="text-bone">grow online</span>.
+            We design and develop high-performance websites, online stores and web applications for South African businesses
+            that want to stand out, connect with customers and grow online.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1.15, ease }}
-            className="flex flex-wrap gap-3 lg:col-span-6 lg:justify-end"
+            transition={{ duration: 0.9, delay: 0.45, ease }}
+            className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4"
           >
-            <MagneticLink href="#contact">
+            <a
+              href="#contact"
+              className="group inline-flex items-center gap-2 rounded-full bg-ink px-7 py-4 font-medium text-paper transition-colors hover:bg-signal"
+            >
               Let&apos;s Build Something
-              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </MagneticLink>
-            <MagneticLink href="#work" variant="ghost">
-              Explore Our Work
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </a>
+            <a href="#work" className="group inline-flex items-center gap-2 font-medium">
+              <span className="link-line">Explore Our Work</span>
               <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" />
-            </MagneticLink>
+            </a>
           </motion.div>
+        </div>
+
+        {/* Real work, straight away: the two live sites on phones. */}
+        <div className="relative mx-auto h-[27rem] w-full max-w-[21rem] sm:h-[36rem] sm:max-w-[26rem] lg:col-span-5 lg:mx-0 lg:ml-auto lg:h-[40rem]">
+          <motion.a
+            href={jjs.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${jjs.title} (${jjs.domain})`}
+            style={{ y: backY }}
+            initial={{ opacity: 0, x: 40, rotate: 10 }}
+            animate={{ opacity: 1, x: 0, rotate: 6 }}
+            transition={{ duration: 1.1, delay: 0.4, ease }}
+            className="absolute right-0 top-0 w-[56%]"
+          >
+            <Phone src={jjs.screens[0].src} alt={jjs.screens[0].alt} priority />
+            <Tag className="-top-3 right-4">{jjs.domain}</Tag>
+          </motion.a>
+          <motion.a
+            href={ivy.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${ivy.title} (${ivy.domain})`}
+            style={{ y: frontY }}
+            initial={{ opacity: 0, y: 60, rotate: -8 }}
+            animate={{ opacity: 1, y: 0, rotate: -4 }}
+            transition={{ duration: 1.1, delay: 0.55, ease }}
+            className="absolute bottom-0 left-0 w-[58%] sm:bottom-4"
+          >
+            <Phone src={ivy.screens[0].src} alt={ivy.screens[0].alt} priority />
+            <Tag className="-right-8 top-20">{ivy.domain}</Tag>
+          </motion.a>
         </div>
       </div>
 
-      {/* Endless strip of services along the bottom of the hero. */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.4 }}
-        className="relative mt-12 border-y border-line bg-ink/60 py-5 backdrop-blur-sm"
-      >
-        <div className="flex w-max animate-marquee gap-12 whitespace-nowrap hover:[animation-play-state:paused]">
-          {[...services, ...services, ...services, ...services].map((s, i) => (
-            <span key={i} className="flex items-center gap-12 font-display text-lg text-mute" aria-hidden={i >= services.length}>
-              {s.title}
-              <span className="text-volt" aria-hidden>
-                ✦
-              </span>
-            </span>
+      {/* Plain-language summary strip. */}
+      <div className="border-y border-line">
+        <dl className="mx-auto grid max-w-7xl gap-px px-5 sm:grid-cols-3 sm:px-8">
+          {[
+            ["What we build", "Websites, online stores & web apps"],
+            ["Where", "Langebaan, working with clients across South Africa"],
+            ["Who you deal with", "The developer building your project. Directly."],
+          ].map(([k, v]) => (
+            <div key={k} className="py-6 sm:pr-8">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-mute">{k}</dt>
+              <dd className="mt-2 font-display text-lg font-medium tracking-tight">{v}</dd>
+            </div>
           ))}
-        </div>
-      </motion.div>
+        </dl>
+      </div>
     </section>
+  );
+}
+
+/** Little label stuck onto a phone, showing the site's real domain. */
+function Tag({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <span
+      className={`absolute z-10 whitespace-nowrap rounded-full border border-line bg-paper px-3 py-1.5 font-mono text-[11px] text-ink shadow-sm ${className}`}
+    >
+      {children} ↗
+    </span>
   );
 }
