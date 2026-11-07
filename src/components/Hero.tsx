@@ -17,11 +17,13 @@ export default function Hero() {
   const [ivy, jjs] = projects;
 
   return (
-    <section id="top" ref={ref} className="relative overflow-hidden pt-28 sm:pt-32">
+    <section id="top" ref={ref} className="relative overflow-hidden pt-24 sm:pt-32">
       {/* One soft electric-blue glow behind the phones. */}
-      <div aria-hidden className="pointer-events-none absolute -right-32 top-24 h-[36rem] w-[36rem] rounded-full bg-signal/25 blur-[130px]" />
-      <div className="mx-auto grid max-w-7xl gap-14 px-5 pb-20 sm:px-8 lg:grid-cols-12 lg:gap-8 lg:pb-28">
-        <div className="lg:col-span-7 lg:pt-10">
+      <div aria-hidden className="pointer-events-none absolute -right-24 top-[22rem] h-[22rem] w-[22rem] rounded-full bg-signal/25 blur-[100px] lg:-right-32 lg:top-24 lg:h-[36rem] lg:w-[36rem] lg:blur-[130px]" />
+      {/* Mobile order: headline, then the phones, then text + buttons, so real work shows on the first screen.
+          Desktop: text on the left, phones on the right (grid rows/columns below). */}
+      <div className="relative z-10 mx-auto grid max-w-7xl gap-y-10 px-5 pb-16 sm:px-8 lg:grid-cols-12 lg:gap-x-8 lg:gap-y-0 lg:pb-28">
+        <div className="lg:col-span-7 lg:row-start-1 lg:pt-10">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -42,7 +44,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.15, ease }}
-            className="headline mt-7 max-w-[13ch] text-[clamp(2.8rem,6.4vw,5.6rem)]"
+            className="headline mt-6 max-w-[13ch] text-[clamp(2.6rem,6.4vw,5.6rem)] lg:mt-7"
           >
             Websites that make your business look as good as it{" "}
             <span className="relative whitespace-nowrap">
@@ -63,12 +65,14 @@ export default function Hero() {
             </span>
             .
           </motion.h1>
+        </div>
 
+        <div className="order-3 lg:order-none lg:col-span-7 lg:row-start-2">
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.35, ease }}
-            className="mt-8 max-w-xl text-lg leading-relaxed text-soft sm:text-xl"
+            className="max-w-xl text-lg leading-relaxed text-soft sm:text-xl lg:mt-8"
           >
             We design and develop high-performance websites, online stores and web applications for South African businesses
             that want to stand out, connect with customers and grow online.
@@ -78,7 +82,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.45, ease }}
-            className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4"
+            className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-4 lg:mt-10"
           >
             <a
               href="#contact"
@@ -95,7 +99,7 @@ export default function Hero() {
         </div>
 
         {/* Real work, straight away: the two live sites on phones. */}
-        <div className="relative mx-auto h-[27rem] w-full max-w-[21rem] sm:h-[36rem] sm:max-w-[26rem] lg:col-span-5 lg:mx-0 lg:ml-auto lg:h-[40rem]">
+        <div className="relative order-2 mx-auto h-[23rem] w-full max-w-[20rem] sm:h-[34rem] sm:max-w-[26rem] lg:order-none lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:mx-0 lg:ml-auto lg:h-[40rem] lg:self-center">
           <motion.a
             href={jjs.url}
             target="_blank"

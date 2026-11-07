@@ -47,8 +47,8 @@ function CaseStudy({ project: p, index }: { project: Project; index: number }) {
       className="grid overflow-hidden rounded-[1.75rem] lg:grid-cols-12"
       style={{ background: p.colors.bg, color: p.colors.ink }}
     >
-      <div className="flex flex-col p-7 sm:p-10 lg:col-span-5 lg:p-12">
-        <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.16em] opacity-70">
+      <div className="flex flex-col p-6 sm:p-10 lg:col-span-5 lg:p-12">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 font-mono text-[11px] uppercase tracking-[0.16em] opacity-70">
           <span>
             {String(index + 1).padStart(2, "0")} · {p.category}
           </span>
@@ -82,15 +82,15 @@ function CaseStudy({ project: p, index }: { project: Project; index: number }) {
       </div>
 
       {/* Three real screens of the live site, fanned out. */}
-      <div className="relative h-[26rem] overflow-hidden sm:h-[34rem] lg:col-span-7 lg:h-auto lg:min-h-[38rem]">
+      <div className="relative h-[24rem] overflow-hidden sm:h-[34rem] lg:col-span-7 lg:h-auto lg:min-h-[38rem]">
         <div aria-hidden className="absolute inset-0 opacity-[0.07]" style={{ background: `radial-gradient(circle at 60% 40%, ${p.colors.accent}, transparent 60%)` }} />
-        <motion.div style={{ y: y1 }} className="absolute left-[4%] top-[14%] w-[36%] -rotate-[5deg] sm:w-[30%]">
+        <motion.div style={{ y: y1 }} className="absolute left-[2%] top-[16%] w-[38%] -rotate-[5deg] sm:w-[30%]">
           <Phone src={p.screens[1].src} alt={p.screens[1].alt} />
         </motion.div>
-        <motion.div style={{ y: y2 }} className="absolute left-1/2 top-[6%] z-10 w-[42%] -translate-x-1/2 sm:w-[33%]">
+        <motion.div style={{ y: y2 }} className="absolute left-1/2 top-[6%] z-10 w-[46%] -translate-x-1/2 sm:w-[33%]">
           <Phone src={p.screens[0].src} alt={p.screens[0].alt} />
         </motion.div>
-        <motion.div style={{ y: y3 }} className="absolute right-[4%] top-[18%] w-[36%] rotate-[5deg] sm:w-[30%]">
+        <motion.div style={{ y: y3 }} className="absolute right-[2%] top-[20%] w-[38%] rotate-[5deg] sm:w-[30%]">
           <Phone src={p.screens[2].src} alt={p.screens[2].alt} />
         </motion.div>
       </div>

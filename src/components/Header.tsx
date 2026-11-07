@@ -9,6 +9,31 @@ import { Logo } from "./ui";
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("");
+
+  // Scroll spy: works out which section is in the middle of the screen,
+  // so the matching nav link can be underlined.
+  useEffect(() => {
+    const ids = [...navLinks.map((l) => l.href.slice(1)), "contact"];
+    const sections = ids.map((id) => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id);
+        });
+      },
+      // Only the band in the middle of the viewport counts as "current".
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    sections.forEach((el) => io.observe(el));
+    // Back at the very top (hero), nothing is underlined.
+    const onTop = () => window.scrollY < 200 && setActive("");
+    window.addEventListener("scroll", onTop, { passive: true });
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", onTop);
+    };
+  }, []);
 
   // Add a border and background once the page scrolls, so the bar stays readable.
   useEffect(() => {
@@ -39,7 +64,11 @@ export default function Header() {
           <ul className="flex items-center gap-8 text-[15px] text-soft">
             {navLinks.map((l) => (
               <li key={l.href}>
-                <a href={l.href} className="link-line py-1 transition-colors hover:text-ink">
+                <a
+                  href={l.href}
+                  aria-current={active === l.href.slice(1) ? "location" : undefined}
+                  className={`link-line py-1 transition-colors hover:text-ink ${active === l.href.slice(1) ? "link-line-on text-ink" : ""}`}
+                >
                   {l.label}
                 </a>
               </li>
@@ -50,9 +79,11 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <a
             href="#contact"
-            className="hidden rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper transition-colors hover:bg-signal hover:text-white sm:inline-block"
+            onClick={() => setOpen(false)}
+            className="rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-paper transition-colors hover:bg-signal hover:text-white sm:px-5"
           >
-            Start a project
+            <span className="sm:hidden">Let&apos;s talk</span>
+            <span className="hidden sm:inline">Start a project</span>
           </a>
           <button
             type="button"
@@ -81,7 +112,12 @@ export default function Header() {
             <ul className="space-y-1 px-5 pb-6 pt-2">
               {[...navLinks, { label: "Contact", href: "#contact" }].map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} onClick={() => setOpen(false)} className="headline block py-2 text-4xl">
+                  <a
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    aria-current={active === l.href.slice(1) ? "location" : undefined}
+                    className={`headline block py-2 text-4xl ${active === l.href.slice(1) ? "text-signal" : ""}`}
+                  >
                     {l.label}
                   </a>
                 </li>

@@ -25,6 +25,7 @@ html {
 }
 
 body {
+  overflow-x: hidden; /* fallback for older iPhones */
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
@@ -66,6 +67,11 @@ section[id] {
 }
 .link-line:hover {
   background-size: 100% 1px;
+}
+/* The nav link for the section you're currently reading: a solid blue underline. */
+.link-line-on {
+  background-image: linear-gradient(var(--color-signal), var(--color-signal));
+  background-size: 100% 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
