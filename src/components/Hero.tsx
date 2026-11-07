@@ -18,6 +18,8 @@ export default function Hero() {
 
   return (
     <section id="top" ref={ref} className="relative overflow-hidden pt-28 sm:pt-32">
+      {/* One soft electric-blue glow behind the phones. */}
+      <div aria-hidden className="pointer-events-none absolute -right-32 top-24 h-[36rem] w-[36rem] rounded-full bg-signal/25 blur-[130px]" />
       <div className="mx-auto grid max-w-7xl gap-14 px-5 pb-20 sm:px-8 lg:grid-cols-12 lg:gap-8 lg:pb-28">
         <div className="lg:col-span-7 lg:pt-10">
           <motion.p
@@ -80,7 +82,7 @@ export default function Hero() {
           >
             <a
               href="#contact"
-              className="group inline-flex items-center gap-2 rounded-full bg-ink px-7 py-4 font-medium text-paper transition-colors hover:bg-signal"
+              className="group inline-flex items-center gap-2 rounded-full bg-signal px-7 py-4 font-medium text-white shadow-[0_10px_40px_-12px_rgba(79,109,255,0.8)] transition-colors hover:bg-[#6280ff]"
             >
               Let&apos;s Build Something
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

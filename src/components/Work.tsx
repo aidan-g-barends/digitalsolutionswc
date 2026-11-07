@@ -8,14 +8,14 @@ import { Label, Phone, Reveal } from "./ui";
 
 export default function Work() {
   return (
-    <section id="work" className="bg-ink py-24 text-paper sm:py-32">
+    <section id="work" className="border-y border-line bg-paper-2 py-24 text-ink sm:py-32">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <Reveal className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <Label dark>Selected work</Label>
+            <Label>Selected work</Label>
             <h2 className="headline mt-5 text-[clamp(2.4rem,5.5vw,4.5rem)]">Live, and working for real businesses.</h2>
           </div>
-          <p className="max-w-xs text-paper/60">These aren&apos;t mockups. Open them on your phone and have a look around.</p>
+          <p className="max-w-xs text-ink/60">These aren&apos;t mockups. Open them on your phone and have a look around.</p>
         </Reveal>
 
         <div className="mt-16 space-y-8 sm:mt-20 sm:space-y-10">

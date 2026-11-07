@@ -1,16 +1,17 @@
 @import "tailwindcss";
 
-/* Design tokens: warm paper, near-black ink and one signal colour, like good print. */
+/* Design tokens: near-black base, crisp off-white text and one electric blue accent.
+   (Names are semantic: "paper" is the background, "ink" is the text colour.) */
 @theme {
-  --color-paper: #f1eee7;
-  --color-paper-2: #e7e2d7;
-  --color-ink: #141413;
-  --color-ink-2: #1d1d1b;
-  --color-soft: #4a4843;
-  --color-mute: #77736b;
-  --color-line: rgb(20 20 19 / 0.12);
-  --color-line-dark: rgb(241 238 231 / 0.14);
-  --color-signal: #e8492a;
+  --color-paper: #07080a;
+  --color-paper-2: #0d0f12;
+  --color-ink: #eeece6;
+  --color-ink-2: #15181c;
+  --color-soft: #a7abb3;
+  --color-mute: #6d727b;
+  --color-line: rgb(255 255 255 / 0.09);
+  --color-line-dark: rgb(255 255 255 / 0.09);
+  --color-signal: #4f6dff;
 
   --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
@@ -20,6 +21,7 @@
 html {
   scroll-behavior: smooth;
   background: var(--color-paper);
+  color-scheme: dark; /* dark scrollbars and dropdowns */
 }
 
 body {

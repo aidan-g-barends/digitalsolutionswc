@@ -57,14 +57,14 @@ export default function Contact() {
   const waLink = site.whatsapp ? `https://wa.me/${site.whatsapp}` : "";
 
   return (
-    <section id="contact" className="bg-ink py-24 text-paper sm:py-32">
+    <section id="contact" className="bg-paper-2 py-24 text-ink sm:py-32">
       <div className="mx-auto grid max-w-7xl gap-16 px-5 sm:px-8 lg:grid-cols-12">
         <Reveal className="lg:col-span-5">
-          <Label dark>Start a project</Label>
+          <Label>Start a project</Label>
           <h2 className="headline mt-5 text-[clamp(2.4rem,4.6vw,4.2rem)]">
             Let&apos;s build something that sets your business <span className="text-signal">apart.</span>
           </h2>
-          <p className="mt-8 max-w-md text-lg leading-relaxed text-paper/65">
+          <p className="mt-8 max-w-md text-lg leading-relaxed text-ink/65">
             Whether you need a professional website, an online store or a custom digital solution, let&apos;s turn your idea
             into something exceptional. Tell us a bit about it and we&apos;ll get back to you personally.
           </p>
@@ -72,7 +72,7 @@ export default function Contact() {
           <dl className="mt-12 space-y-6 border-t border-line-dark pt-8">
             {site.email && (
               <div>
-                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-paper/45">Email</dt>
+                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink/45">Email</dt>
                 <dd className="mt-1.5">
                   <a href={`mailto:${site.email}`} className="link-line font-display text-xl font-medium tracking-tight sm:text-2xl">
                     {site.email}
@@ -82,7 +82,7 @@ export default function Contact() {
             )}
             {site.phone && (
               <div>
-                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-paper/45">Phone</dt>
+                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink/45">Phone</dt>
                 <dd className="mt-1.5">
                   <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="link-line font-display text-xl font-medium sm:text-2xl">
                     {site.phone}
@@ -92,7 +92,7 @@ export default function Contact() {
             )}
             {waLink && (
               <div>
-                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-paper/45">WhatsApp</dt>
+                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink/45">WhatsApp</dt>
                 <dd className="mt-1.5">
                   <a href={waLink} target="_blank" rel="noopener noreferrer" className="link-line font-display text-xl font-medium sm:text-2xl">
                     Send us a message
@@ -104,7 +104,7 @@ export default function Contact() {
         </Reveal>
 
         <Reveal delay={0.1} className="lg:col-span-7">
-          <div className="relative rounded-[1.5rem] bg-paper p-6 text-ink sm:p-10">
+          <div className="relative rounded-[1.5rem] border border-line bg-paper p-6 text-ink sm:p-10">
             <AnimatePresence mode="wait">
               {status === "sent" ? (
                 <motion.div
@@ -180,7 +180,7 @@ export default function Contact() {
                   </div>
 
                   {status === "error" && (
-                    <div role="alert" className="flex gap-3 rounded-xl bg-signal/10 p-4 text-sm text-[#9b2a14] sm:col-span-2">
+                    <div role="alert" className="flex gap-3 rounded-xl bg-red-500/10 p-4 text-sm text-red-200 sm:col-span-2">
                       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                       <p>
                         {serverError}{" "}
@@ -202,7 +202,7 @@ export default function Contact() {
                     <button
                       type="submit"
                       disabled={status === "sending"}
-                      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-7 py-4 font-medium text-paper transition-colors hover:bg-signal disabled:cursor-wait disabled:opacity-70 sm:w-auto"
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-signal px-7 py-4 font-medium text-white shadow-[0_10px_40px_-12px_rgba(79,109,255,0.8)] transition-colors hover:bg-[#6280ff] disabled:cursor-wait disabled:opacity-70 sm:w-auto"
                     >
                       {status === "sending" ? (
                         <>
@@ -229,7 +229,7 @@ export default function Contact() {
 // Underlined fields (like a paper form) instead of boxes.
 const inputCls = (err?: string) =>
   `w-full border-0 border-b bg-transparent px-0 py-2.5 text-lg text-ink placeholder:text-mute/70 transition-colors focus:outline-none focus-visible:outline-none ${
-    err ? "border-[#c0391f]" : "border-ink/25 hover:border-ink/50 focus:border-ink"
+    err ? "border-red-400" : "border-ink/25 hover:border-ink/50 focus:border-ink"
   }`;
 
 // Connects each field to its error message for screen readers.
@@ -264,7 +264,7 @@ function Field({
       </label>
       {children}
       {error && (
-        <p id={`e-${id}`} className="mt-2 text-xs text-[#c0391f]">
+        <p id={`e-${id}`} className="mt-2 text-xs text-red-300">
           {error}
         </p>
       )}

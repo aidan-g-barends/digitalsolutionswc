@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f1eee7",
+  themeColor: "#07080a",
 };
 
 // Structured data so Google understands this is a web design business.
