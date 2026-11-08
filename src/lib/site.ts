@@ -7,7 +7,7 @@
 
 export const site: {
   name: string; shortName: string; location: string; description: string;
-  email: string; phone: string; whatsapp: string; founder: string;
+  email: string; phone: string; whatsapp: string;
   socials: { label: string; href: string }[];
 } = {
   name: "Digital Solutions WC",
@@ -21,7 +21,6 @@ export const site: {
   email: "digital.solutions.wc@gmail.com",
   phone: "", // e.g. "071 234 5678"
   whatsapp: "", // international format without "+", e.g. "27712345678"
-  founder: "Aidan Barends",
 
   // Social links. Any link left as "" is not shown on the site.
   socials: [
@@ -128,7 +127,7 @@ export const projects: Project[] = [
     url: "https://jjsbussol.co.za/",
     domain: "jjsbussol.co.za",
     about:
-      "JJS Business Solutions is an accredited skills development provider in Langebaan, delivering training, consulting and projects across South Africa.",
+      "JJS Business Solutions is an accredited skills development provider delivering training, consulting and projects across South Africa.",
     built:
       "We built a site that presents their three service areas and credentials clearly, and makes it easy for organisations to enquire.",
     scope: ["Website design & build", "Service & credential pages", "Enquiry & WhatsApp contact", "SEO setup", "Launch on the client's domain"],

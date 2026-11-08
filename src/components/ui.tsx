@@ -59,7 +59,7 @@ export function Phone({ src, alt, className = "", priority = false }: { src: str
   );
 }
 
-/** Live local time in Langebaan. A small, real detail that shows there's a person behind the site. */
+/** Live local South African time. A small, real detail that shows there's a person behind the site. */
 export function LocalTime() {
   const [time, setTime] = useState("");
   useEffect(() => {

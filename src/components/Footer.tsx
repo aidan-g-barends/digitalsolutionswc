@@ -18,7 +18,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-4">
             <Logo />
             <p className="mt-5 max-w-xs leading-relaxed text-ink/55">
-              Websites, online stores and web applications for South African businesses. Based in Langebaan, Western Cape.
+              Websites, online stores and web applications for South African businesses. Based in the Western Cape.
             </p>
           </div>
           {cols.map((c) => (

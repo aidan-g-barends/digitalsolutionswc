@@ -36,7 +36,7 @@ export default function Hero() {
             </span>
             <span aria-hidden>/</span>
             <span>
-              Langebaan, <LocalTime />
+              Western Cape, <LocalTime />
             </span>
           </motion.p>
 
@@ -136,7 +136,7 @@ export default function Hero() {
         <dl className="mx-auto grid max-w-7xl gap-px px-5 sm:grid-cols-3 sm:px-8">
           {[
             ["What we build", "Websites, online stores & web apps"],
-            ["Where", "Langebaan, working with clients across South Africa"],
+            ["Where", "Western Cape, working with clients across South Africa"],
             ["Who you deal with", "The developer building your project. Directly."],
           ].map(([k, v]) => (
             <div key={k} className="py-6 sm:pr-8">

@@ -11,7 +11,7 @@ export default function About() {
           <h2 className="headline mt-5 text-[clamp(2.4rem,5vw,4rem)]">You talk to the person building your site.</h2>
           <div className="mt-8 space-y-4 text-lg leading-relaxed text-soft">
             <p>
-              {site.name} is run by {site.founder}, a software developer based in Langebaan on the West Coast.
+              {site.name} is an independent web studio in the Western Cape, working with businesses across South Africa.
             </p>
             <p>
               No account managers and no hand-offs. The person you brief is the person who designs, builds and launches
