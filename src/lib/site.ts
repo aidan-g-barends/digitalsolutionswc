@@ -97,6 +97,8 @@ export type Project = {
   built: string;
   scope: string[];
   stack?: string;
+  // Optional short label shown next to the category, e.g. "Pre-launch".
+  status?: string;
   // Real screenshots of the live site, taken on a phone (in /public/work).
   screens: { src: string; alt: string }[];
   // The client's own brand colours, so each case study looks like their brand.
@@ -137,6 +139,26 @@ export const projects: Project[] = [
       { src: "/work/jjs-trusted.webp", alt: "JJS Business Solutions trusted-by section" },
     ],
     colors: { bg: "#e3eadc", ink: "#1f2a1c", accent: "#46703e" },
+  },
+  {
+    title: "KNOWNMERCH",
+    category: "E-commerce",
+    status: "Pre-launch",
+    // No custom domain yet: this is its Vercel address. Swap both when the domain is live.
+    url: "https://knownmerch.vercel.app/",
+    domain: "knownmerch.vercel.app",
+    about: "KNOWNMERCH is a South African online store for bar, braai and kuier gear.",
+    built:
+      "We designed and built the whole store from scratch, without Shopify: the product catalogue and stock run on Supabase, payments go through Yoco, and the owner manages orders and reviews from their own admin dashboard.",
+    scope: ["Brand & storefront design", "Custom catalogue & stock", "Yoco checkout & webhooks", "Admin dashboard", "Order emails & reviews", "SEO & Meta Pixel setup"],
+    stack: "React · TanStack Start · Supabase · Yoco · Vercel",
+    screens: [
+      { src: "/work/km-home.webp", alt: "KNOWNMERCH home page on a phone: Gear that earns its place" },
+      { src: "/work/km-range.webp", alt: "KNOWNMERCH product range: four tools, no filler" },
+      { src: "/work/km-product.webp", alt: "KNOWNMERCH DopMate Smart Dispenser product page" },
+    ],
+    // The store's own wine red, with its cream paper colour for text.
+    colors: { bg: "#7a1e2c", ink: "#f4f1ea", accent: "#121010" },
   },
 ];
 

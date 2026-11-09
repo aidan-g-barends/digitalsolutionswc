@@ -71,8 +71,9 @@ function CaseStudy({ project: p, index, total, stack }: { project: Project; inde
       >
         <div className="relative z-10 flex flex-col p-6 sm:p-10 lg:col-span-5 lg:p-12">
           <div className="annot flex flex-wrap items-center justify-between gap-x-6 gap-y-1 opacity-70">
-            <span>
+            <span className="flex items-center gap-3">
               {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")} · {p.category}
+              {p.status && <span className="rounded-[3px] border border-current px-1.5 py-0.5 text-[10px]">{p.status}</span>}
             </span>
             <span className="normal-case tracking-normal">{p.domain}</span>
           </div>
