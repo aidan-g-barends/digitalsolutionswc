@@ -1,21 +1,38 @@
 @import "tailwindcss";
 
-/* Design tokens: near-black base, crisp off-white text and one electric blue accent.
-   (Names are semantic: "paper" is the background, "ink" is the text colour.) */
+/* ─────────────────────────────────────────────────────────────
+   DESIGN TOKENS — "Signal & Grid"
+   Near-black base, warm off-white text and ONE electric-blue accent.
+   The blue is used like a text cursor / selection colour: it marks
+   what is active, selected or important, and nothing else.
+   (Names are semantic: "paper" is the background, "ink" is the text.)
+   ───────────────────────────────────────────────────────────── */
 @theme {
   --color-paper: #07080a;
-  --color-paper-2: #0d0f12;
+  --color-paper-2: #0c0e11;
+  --color-paper-3: #12151a;
   --color-ink: #eeece6;
   --color-ink-2: #15181c;
   --color-soft: #a7abb3;
-  --color-mute: #6d727b;
+  --color-mute: #737882;
   --color-line: rgb(255 255 255 / 0.09);
   --color-line-dark: rgb(255 255 255 / 0.09);
+  --color-line-strong: rgb(255 255 255 / 0.18);
   --color-signal: #4f6dff;
+  --color-signal-hi: #6a84ff;
 
   --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+  /* One easing curve for the whole site, so every motion feels related. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-caret: caret 1.1s steps(1) infinite;
+  @keyframes caret {
+    0%, 55% { opacity: 1; }
+    56%, 100% { opacity: 0; }
+  }
 }
 
 html {
@@ -45,16 +62,28 @@ section[id] {
 :focus-visible {
   outline: 2px solid var(--color-signal);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
-/* Headlines: sentence case, tight, confident. No shouting. */
+/* Display type: Bricolage's width axis set condensed, with the large optical size.
+   This gives the headlines an architectural, engineered feel without another font. */
+.display,
 .headline {
   font-family: var(--font-display);
   font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 0.98;
+  font-stretch: 80%;
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.025em;
+  line-height: 0.92;
   text-wrap: balance;
+}
+
+/* Mono annotation, used for labels, indexes and metadata. */
+.annot {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 /* Underline that draws in from the left on hover. */
@@ -63,21 +92,67 @@ section[id] {
   background-size: 0% 1px;
   background-position: 0 100%;
   background-repeat: no-repeat;
-  transition: background-size 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-size 0.5s var(--ease-out-expo);
 }
-.link-line:hover {
+.link-line:hover,
+.group:hover .link-line {
   background-size: 100% 1px;
 }
-/* The nav link for the section you're currently reading: a solid blue underline. */
+/* The nav link for the section you're currently reading. */
 .link-line-on {
   background-image: linear-gradient(var(--color-signal), var(--color-signal));
   background-size: 100% 2px;
+}
+
+/* Masked word for reveal animations. The padding stops descenders (g, y, p)
+   from being clipped; the negative margin keeps the line height unchanged. */
+.mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+/* Text "roll" on buttons: the label slides up and an identical copy follows it. */
+.roll {
+  display: inline-grid;
+  overflow: hidden;
+  line-height: 1.25;
+}
+.roll > span {
+  grid-area: 1 / 1;
+  transition: transform 0.55s var(--ease-out-expo);
+}
+.roll > span + span {
+  transform: translateY(105%);
+}
+.group:hover .roll > span:first-child,
+.group:focus-visible .roll > span:first-child {
+  transform: translateY(-105%);
+}
+.group:hover .roll > span + span,
+.group:focus-visible .roll > span + span {
+  transform: translateY(0);
+}
+
+/* Faint 12-column guides: the layout grid itself, made visible. */
+.guides {
+  background-image: linear-gradient(to right, var(--color-line) 1px, transparent 1px);
+  background-size: calc(100% / 12) 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Hero reel: the current screen's progress tick fills over the slide's duration. */
+@keyframes reel-fill {
+  from { transform: translateY(-50%) scaleX(0); }
+  to { transform: translateY(-50%) scaleX(1); }
 }

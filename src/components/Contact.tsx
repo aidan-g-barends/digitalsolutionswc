@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, ArrowRight, Check, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { validateEnquiry, type Enquiry, type EnquiryErrors } from "@/lib/enquiry";
-import { budgetOptions, serviceOptions, site } from "@/lib/site";
-import { Label, Reveal } from "./ui";
+import { budgetOptions, nextSteps, serviceOptions, site } from "@/lib/site";
+import { Label, Reveal, SplitHeading } from "./ui";
 
 const empty: Enquiry = { name: "", business: "", email: "", phone: "", service: "", message: "", budget: "" };
 type Status = "idle" | "sending" | "sent" | "error";
@@ -59,20 +59,36 @@ export default function Contact() {
   return (
     <section id="contact" className="bg-paper-2 py-24 text-ink sm:py-32">
       <div className="mx-auto grid max-w-7xl gap-16 px-5 sm:px-8 lg:grid-cols-12">
-        <Reveal className="lg:col-span-5">
-          <Label>Start a project</Label>
-          <h2 className="headline mt-5 text-[clamp(2.4rem,4.6vw,4.2rem)]">
-            Let&apos;s build something that sets your business <span className="text-signal">apart.</span>
-          </h2>
-          <p className="mt-8 max-w-md text-lg leading-relaxed text-ink/65">
+        <div className="lg:col-span-5">
+          <Label index="05">Start a project</Label>
+          <SplitHeading
+            text="Let's build something that sets your business apart."
+            accent={["apart."]}
+            className="display mt-6 text-[clamp(2.8rem,5.2vw,5rem)]"
+          />
+          <Reveal delay={0.15}>
+          <p className="mt-8 max-w-md text-lg leading-relaxed text-soft">
             Whether you need a professional website, an online store or a custom digital solution, let&apos;s turn your idea
             into something exceptional. Tell us a bit about it and we&apos;ll get back to you personally.
           </p>
 
-          <dl className="mt-12 space-y-6 border-t border-line-dark pt-8">
+          {/* What happens after you press send: removes the guesswork. */}
+          <div className="mt-12">
+            <p className="annot text-mute">What happens next</p>
+            <ol className="mt-4 space-y-3">
+              {nextSteps.map((step, i) => (
+                <li key={step} className="flex gap-4 leading-relaxed">
+                  <span className="mt-[3px] font-mono text-xs text-signal">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="text-ink/85">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <dl className="mt-12 space-y-6 border-t border-line pt-8">
             {site.email && (
               <div>
-                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink/45">Email</dt>
+                <dt className="annot text-mute">Email</dt>
                 <dd className="mt-1.5">
                   <a href={`mailto:${site.email}`} className="link-line font-display text-xl font-medium tracking-tight sm:text-2xl">
                     {site.email}
@@ -82,7 +98,7 @@ export default function Contact() {
             )}
             {site.phone && (
               <div>
-                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink/45">Phone</dt>
+                <dt className="annot text-mute">Phone</dt>
                 <dd className="mt-1.5">
                   <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="link-line font-display text-xl font-medium sm:text-2xl">
                     {site.phone}
@@ -92,7 +108,7 @@ export default function Contact() {
             )}
             {waLink && (
               <div>
-                <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink/45">WhatsApp</dt>
+                <dt className="annot text-mute">WhatsApp</dt>
                 <dd className="mt-1.5">
                   <a href={waLink} target="_blank" rel="noopener noreferrer" className="link-line font-display text-xl font-medium sm:text-2xl">
                     Send us a message
@@ -101,10 +117,11 @@ export default function Contact() {
               </div>
             )}
           </dl>
-        </Reveal>
+          </Reveal>
+        </div>
 
         <Reveal delay={0.1} className="lg:col-span-7">
-          <div className="relative rounded-[1.5rem] border border-line bg-paper p-6 text-ink sm:p-10">
+          <div className="relative rounded-[14px] border border-line-strong bg-paper p-6 text-ink shadow-[0_40px_120px_-60px_rgba(79,109,255,0.35)] sm:p-10">
             <AnimatePresence mode="wait">
               {status === "sent" ? (
                 <motion.div
@@ -115,10 +132,10 @@ export default function Contact() {
                   exit={{ opacity: 0 }}
                   className="flex min-h-[30rem] flex-col items-start justify-center"
                 >
-                  <span className="grid h-14 w-14 place-items-center rounded-full bg-signal text-white">
+                  <span className="grid h-14 w-14 place-items-center rounded-[5px] bg-signal text-white">
                     <Check className="h-6 w-6" />
                   </span>
-                  <h3 className="headline mt-8 text-4xl">Thanks, we&apos;ve got it.</h3>
+                  <h3 className="display mt-8 text-5xl">Thanks, we&apos;ve got it.</h3>
                   <p className="mt-4 max-w-sm leading-relaxed text-soft">
                     Your enquiry has been sent. We&apos;ll read it properly and get back to you soon.
                   </p>
@@ -140,17 +157,50 @@ export default function Contact() {
                   <Field id="phone" label="Phone number" optional error={errors.phone}>
                     <input id="f-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" value={data.phone} onChange={update} {...a11y("phone", errors)} className={inputCls(errors.phone)} />
                   </Field>
-                  <Field id="service" label="What service are you interested in?" error={errors.service} required>
-                    <select id="f-service" name="service" value={data.service} onChange={update} {...a11y("service", errors)} className={inputCls(errors.service)}>
-                      <option value="" disabled>
-                        Choose a service
-                      </option>
-                      {serviceOptions.map((o) => (
-                        <option key={o}>{o}</option>
+                  <fieldset
+                    className="sm:col-span-2"
+                    aria-invalid={errors.service ? true : undefined}
+                    aria-describedby={errors.service ? "e-service" : undefined}
+                  >
+                    <legend className="block text-sm font-medium text-soft">
+                      What service are you interested in?<span className="text-signal"> *</span>
+                    </legend>
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                      {serviceOptions.map((o, i) => (
+                        <label
+                          key={o}
+                          className={`relative flex cursor-pointer items-center last:col-span-full gap-2.5 rounded-[5px] border px-3 py-3 text-[14px] leading-tight transition-colors duration-300 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal ${
+                            data.service === o
+                              ? "border-signal bg-signal/10 text-ink"
+                              : errors.service
+                                ? "border-red-400/60 text-soft hover:border-ink/40"
+                                : "border-line-strong text-soft hover:border-ink/40 hover:text-ink"
+                          }`}
+                        >
+                          <input
+                            id={i === 0 ? "f-service" : undefined}
+                            type="radio"
+                            name="service"
+                            value={o}
+                            checked={data.service === o}
+                            onChange={update}
+                            className="peer sr-only"
+                          />
+                          <span
+                            aria-hidden
+                            className={`h-2.5 w-2.5 shrink-0 border transition-colors ${data.service === o ? "border-signal bg-signal" : "border-line-strong"}`}
+                          />
+                          {o}
+                        </label>
                       ))}
-                    </select>
-                  </Field>
-                  <Field id="budget" label="Estimated budget" optional error={errors.budget}>
+                    </div>
+                    {errors.service && (
+                      <p id="e-service" className="mt-2 text-xs text-red-300">
+                        {errors.service}
+                      </p>
+                    )}
+                  </fieldset>
+                  <Field id="budget" label="Estimated budget" optional error={errors.budget} wide>
                     <select id="f-budget" name="budget" value={data.budget} onChange={update} {...a11y("budget", errors)} className={inputCls(errors.budget)}>
                       <option value="">Select a range</option>
                       {budgetOptions.map((o) => (
@@ -180,7 +230,7 @@ export default function Contact() {
                   </div>
 
                   {status === "error" && (
-                    <div role="alert" className="flex gap-3 rounded-xl bg-red-500/10 p-4 text-sm text-red-200 sm:col-span-2">
+                    <div role="alert" className="flex gap-3 rounded-[5px] border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200 sm:col-span-2">
                       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                       <p>
                         {serverError}{" "}
@@ -202,18 +252,23 @@ export default function Contact() {
                     <button
                       type="submit"
                       disabled={status === "sending"}
-                      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-signal px-7 py-4 font-medium text-white shadow-[0_10px_40px_-12px_rgba(79,109,255,0.8)] transition-colors hover:bg-[#6280ff] disabled:cursor-wait disabled:opacity-70 sm:w-auto"
+                      className="group inline-flex w-full items-stretch rounded-[5px] font-medium text-white disabled:cursor-wait disabled:opacity-70 sm:w-auto"
                     >
-                      {status === "sending" ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" /> Sending...
-                        </>
-                      ) : (
-                        <>
-                          Start Your Project
-                          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                        </>
-                      )}
+                      <span className="flex h-14 flex-1 items-center justify-center rounded-l-[5px] bg-signal px-6 transition-colors duration-300 group-hover:bg-signal-hi">
+                        {status === "sending" ? (
+                          <span className="inline-flex items-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" /> Sending...
+                          </span>
+                        ) : (
+                          <span className="roll">
+                            <span>Send enquiry</span>
+                            <span aria-hidden>Send enquiry</span>
+                          </span>
+                        )}
+                      </span>
+                      <span aria-hidden className="grid w-14 place-items-center rounded-r-[5px] border-l border-white/20 bg-signal transition-colors duration-300 group-hover:bg-signal-hi">
+                        <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:-rotate-45" />
+                      </span>
                     </button>
                   </div>
                 </motion.form>

@@ -17,18 +17,24 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 72,
-          background: "radial-gradient(circle at 85% 30%, #26357f 0%, #07080a 55%)",
+          background: "#07080a",
+          backgroundImage: "linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px)",
+          backgroundSize: "100px 100%",
           color: "#eeece6",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 30 }}>
-          <div style={{ width: 18, height: 18, borderRadius: 9, background: "#4f6dff" }} />
           <span>{site.name}</span>
+          <div style={{ width: 10, height: 30, background: "#4f6dff" }} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", fontSize: 84, fontWeight: 700, lineHeight: 0.95, letterSpacing: -4 }}>
           <span>Websites that make your</span>
           <span>business look as good</span>
-          <span style={{ color: "#4f6dff" }}>as it really is.</span>
+          <div style={{ display: "flex" }}>
+            <span>as it&nbsp;</span>
+            <span style={{ background: "#4f6dff", color: "#ffffff", padding: "0 8px" }}>really is</span>
+            <span>.</span>
+          </div>
         </div>
         <div style={{ display: "flex", fontSize: 26, color: "#8a8f99" }}>{`Websites · Online stores · Web applications · ${site.location}`}</div>
       </div>

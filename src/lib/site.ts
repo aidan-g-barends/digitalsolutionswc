@@ -205,6 +205,14 @@ export const serviceOptions = [
   "Other",
 ];
 
+// Shown beside the enquiry form so people know what happens after they press send.
+// Edit these to match how you actually work.
+export const nextSteps = [
+  "We read your enquiry and reply to you personally.",
+  "A short call to talk through your business and what you need.",
+  "A clear proposal with scope, timeline and price. No obligation.",
+];
+
 export const budgetOptions = [
   "Not sure yet",
   "Under R5,000",

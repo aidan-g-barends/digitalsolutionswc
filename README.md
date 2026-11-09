@@ -14,7 +14,8 @@ Open http://localhost:3000.
 ## Change content
 
 Almost everything lives in `src/lib/site.ts`: business name, email, phone, WhatsApp, socials,
-services, projects, reasons, process steps and the tech stack. Empty values (`""`) are hidden.
+services, projects, reasons, process steps, the "what happens next" steps beside the form and the
+tech stack. Empty values (`""`) are hidden.
 
 ### Project screenshots
 
@@ -25,7 +26,18 @@ For the best look, add full-page screenshots:
 2. Save them as `public/projects/ivy-hold.png` and `public/projects/jjs-bussol.png`.
 3. In `src/lib/site.ts`, set `screenshot: "/projects/ivy-hold.png"` (and the same for JJS).
 
-Hovering a project slowly scrolls the screenshot, so tall full-page shots look best.
+Every screen listed in a project's `screens` also appears in the hero's "Now showing" reel.
+
+## Design system ("Signal & Grid")
+
+- **Colour:** near-black `paper`, off-white `ink`, one electric blue `signal`. Blue only marks what is
+  active, selected or important (like a text cursor or selection). Tokens are in `src/app/globals.css`.
+- **Type:** Bricolage Grotesque set condensed (`.display`) for headlines, Hanken Grotesk for body,
+  JetBrains Mono (`.annot`) for labels and indexes.
+- **Shape:** 4-6px corners on controls, 14px on media cards. No pills.
+- **Motion:** one easing curve (`--ease-out-expo`). Shared pieces live in `src/components/ui.tsx`
+  (`Button`, `SplitHeading`, `Reveal`, `Label`). Scroll-linked effects switch off when the visitor
+  has "reduce motion" turned on (`useStill`).
 
 ## Enquiry form
 
