@@ -59,6 +59,20 @@ section[id] {
   color: white;
 }
 
+/* Dropdown lists are drawn by the operating system. Windows paints them white even on a
+   dark page, while the options inherit our light text colour, so they became invisible.
+   Giving the options their own background and text colour fixes that everywhere. */
+select {
+  color-scheme: dark;
+}
+select option {
+  background-color: var(--color-paper-3);
+  color: var(--color-ink);
+}
+select option:disabled {
+  color: var(--color-mute);
+}
+
 :focus-visible {
   outline: 2px solid var(--color-signal);
   outline-offset: 3px;
