@@ -333,8 +333,67 @@ function OverviewTab() {
               </li>
             ))}
           </ul>
+          {data.setup.ai && <AiCheck />}
         </Panel>
       </div>
+    </div>
+  );
+}
+
+type AiCheckResult = {
+  ok: boolean;
+  model?: string;
+  ms?: number;
+  hint?: string;
+  error?: string;
+  lastProblem?: { model: string; status: number; message: string } | null;
+};
+
+/** Sends one test message to Gemini and shows exactly what Google answered. */
+function AiCheck() {
+  const [state, setState] = useState<"idle" | "testing">("idle");
+  const [result, setResult] = useState<AiCheckResult | null>(null);
+
+  async function run() {
+    setState("testing");
+    try {
+      setResult(await api<AiCheckResult>("/api/admin/ai-check", { method: "POST" }));
+    } catch (err) {
+      setResult({ ok: false, error: err instanceof Error ? err.message : "Request failed" });
+    }
+    setState("idle");
+  }
+
+  return (
+    <div className="mt-5 border-t border-line pt-5">
+      <button
+        type="button"
+        onClick={run}
+        disabled={state === "testing"}
+        className="inline-flex h-10 items-center gap-2 rounded-[5px] border border-line-strong px-4 text-sm font-medium transition-colors hover:border-signal disabled:opacity-60"
+      >
+        {state === "testing" ? <Spinner /> : null}
+        {state === "testing" ? "Testing..." : "Test the assistant"}
+      </button>
+      {result && (
+        <div role="status" className={`mt-4 rounded-[5px] p-3 text-sm ${result.ok ? "bg-ok/10" : "bg-danger/10 text-danger"}`}>
+          {result.ok ? (
+            <p>
+              Working. <span className="text-mute">Answered by {result.model} in {((result.ms ?? 0) / 1000).toFixed(1)}s.</span>
+            </p>
+          ) : (
+            <>
+              <p className="font-medium">{result.hint || "The assistant is not working."}</p>
+              {result.lastProblem && (
+                <p className="mt-2 font-mono text-xs text-soft">
+                  {result.lastProblem.model} · HTTP {result.lastProblem.status} · {result.lastProblem.message}
+                </p>
+              )}
+              {!result.lastProblem && result.error && <p className="mt-2 font-mono text-xs text-soft">{result.error}</p>}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

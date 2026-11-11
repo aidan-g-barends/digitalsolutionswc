@@ -3,7 +3,11 @@
  * our server to run tools (save a lead, check availability, book a meeting), we run
  * them, send the results back, and the model writes its reply. Server only.
  *
- * Env vars: GEMINI_API_KEY (required), GEMINI_MODEL (optional, default gemini-2.5-flash)
+ * Env vars: GEMINI_API_KEY (required), GEMINI_MODEL (optional)
+ *
+ * Reliability: Google retires model versions and gives each free-tier model its own daily
+ * quota. So instead of depending on one model name, we try a short chain of models and
+ * remember the one that works. Key problems are reported clearly instead of as "failed".
  */
 
 export type ChatTurn = { role: "user" | "assistant"; text: string };
@@ -31,6 +35,90 @@ export function aiEnabled() {
   return Boolean(process.env.GEMINI_API_KEY);
 }
 
+// Tried in order after GEMINI_MODEL. The "-latest" aliases are kept current by Google,
+// so the chain keeps working when a dated version is retired.
+const FALLBACK_MODELS = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite", "gemini-flash-lite-latest"];
+
+// The last model that answered. Tried first next time, so we don't repeat failed attempts.
+let workingModel: string | null = null;
+
+/** The most recent problem Google reported, for the admin "Test the assistant" check. */
+export type AiProblem = { at: string; model: string; status: number; message: string };
+let lastProblem: AiProblem | null = null;
+export const getLastProblem = () => lastProblem;
+export const getWorkingModel = () => workingModel;
+
+function modelChain() {
+  const preferred = process.env.GEMINI_MODEL?.trim();
+  return [...new Set([workingModel, preferred, ...FALLBACK_MODELS].filter((m): m is string => !!m))];
+}
+
+/** Pulls Google's human-readable message out of an error response. */
+function googleMessage(raw: string) {
+  try {
+    const j = JSON.parse(raw);
+    const e = Array.isArray(j) ? j[0]?.error : j.error;
+    return [e?.status, e?.message].filter(Boolean).join(": ") || raw.slice(0, 300);
+  } catch {
+    return raw.slice(0, 300);
+  }
+}
+
+/** 2.5 Flash "thinks" by default. A sales chat doesn't need it: off is faster and saves quota. */
+const canSkipThinking = (model: string) => /2\.5-flash/.test(model);
+
+type Attempt = { ok: true; data: Record<string, unknown>; model: string } | { ok: false; kind: AiError["kind"]; message: string };
+
+/**
+ * Sends one request, walking the model chain until a model answers.
+ * - Key/permission problems stop immediately (another model won't help).
+ * - Retired/unknown models, per-model quota limits and server errors move on to the next model.
+ */
+async function generate(key: string, body: Record<string, unknown>): Promise<Attempt> {
+  const base = process.env.GEMINI_API_BASE || "https://generativelanguage.googleapis.com";
+  let last: Attempt = { ok: false, kind: "failed", message: "No model answered." };
+  let allBusy = true;
+
+  for (const model of modelChain()) {
+    const generationConfig = {
+      temperature: 0.7,
+      ...(canSkipThinking(model) ? { maxOutputTokens: 800, thinkingConfig: { thinkingBudget: 0 } } : { maxOutputTokens: 4096 }),
+    };
+    let res: Response;
+    try {
+      res = await fetch(`${base}/v1beta/models/${model}:generateContent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+        body: JSON.stringify({ ...body, generationConfig }),
+        signal: AbortSignal.timeout(25_000),
+      });
+    } catch (err) {
+      console.error(`Gemini request to ${model} failed`, err);
+      allBusy = false;
+      last = { ok: false, kind: "failed", message: `Could not reach Google (${model}).` };
+      continue;
+    }
+
+    if (res.ok) {
+      workingModel = model;
+      return { ok: true, data: await res.json(), model };
+    }
+
+    const message = googleMessage(await res.text());
+    lastProblem = { at: new Date().toISOString(), model, status: res.status, message };
+    console.error("Gemini error", model, res.status, message);
+    if (workingModel === model) workingModel = null;
+
+    // A bad, restricted or unauthorised key: no other model will work either.
+    if (res.status === 401 || res.status === 403 || /API_KEY|api key/i.test(message)) {
+      return { ok: false, kind: "config", message };
+    }
+    if (res.status !== 429 && res.status !== 503) allBusy = false;
+    last = { ok: false, kind: res.status === 429 || res.status === 503 ? "busy" : "failed", message };
+  }
+  return allBusy && last.ok === false ? { ...last, kind: "busy" } : last;
+}
+
 export async function runAssistant({
   system,
   history,
@@ -41,10 +129,9 @@ export async function runAssistant({
   history: ChatTurn[];
   tools: Tool[];
   maxSteps?: number;
-}): Promise<{ reply: string; toolsUsed: string[] }> {
-  const key = process.env.GEMINI_API_KEY;
+}): Promise<{ reply: string; toolsUsed: string[]; model: string }> {
+  const key = process.env.GEMINI_API_KEY?.trim();
   if (!key) throw new AiError("GEMINI_API_KEY is not set", "config");
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
   const contents: Content[] = history.map((t) => ({
     role: t.role === "assistant" ? "model" : "user",
@@ -56,37 +143,15 @@ export async function runAssistant({
     const body: Record<string, unknown> = {
       systemInstruction: { parts: [{ text: system }] },
       contents,
-      tools: [{ functionDeclarations: tools.map(({ name, description, parameters }) => ({ name, description, parameters })) }],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 800,
-        // 2.5 Flash "thinks" by default. A sales chat doesn't need it: switching it off
-        // makes replies faster and stretches the free quota.
-        ...(/2\.5-flash/.test(model) ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
-      },
+      // An empty tool list is rejected by the API, so only send tools when there are some.
+      ...(tools.length
+        ? { tools: [{ functionDeclarations: tools.map(({ name, description, parameters }) => ({ name, description, parameters })) }] }
+        : {}),
     };
 
-    let res: Response;
-    try {
-      // GEMINI_API_BASE is only for local testing against a mock server.
-      const base = process.env.GEMINI_API_BASE || "https://generativelanguage.googleapis.com";
-      res = await fetch(`${base}/v1beta/models/${model}:generateContent`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(25_000),
-      });
-    } catch (err) {
-      console.error("Gemini request failed", err);
-      throw new AiError("AI request failed", "failed");
-    }
-    if (res.status === 429 || res.status === 503) throw new AiError("AI is busy", "busy");
-    if (!res.ok) {
-      console.error("Gemini error", res.status, await res.text());
-      throw new AiError("AI request failed", "failed");
-    }
-
-    const data = await res.json();
+    const attempt = await generate(key, body);
+    if (!attempt.ok) throw new AiError(attempt.message, attempt.kind);
+    const data = attempt.data as { candidates?: { content?: { parts?: Part[] }; finishReason?: string }[] };
     const candidate = data.candidates?.[0];
     const parts: Part[] = candidate?.content?.parts ?? [];
     const calls = parts.filter((p) => p.functionCall);
@@ -97,7 +162,7 @@ export async function runAssistant({
         .join("")
         .trim();
       if (!reply) throw new AiError(`Empty reply (${candidate?.finishReason ?? "unknown"})`, "failed");
-      return { reply, toolsUsed };
+      return { reply, toolsUsed, model: attempt.model };
     }
 
     // The model wants tools run. Keep its turn exactly as sent (it can include

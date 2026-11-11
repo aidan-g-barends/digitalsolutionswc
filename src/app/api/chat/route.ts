@@ -92,6 +92,15 @@ export async function POST(request: Request) {
         { status: 503 },
       );
     }
+    if (err instanceof AiError && err.kind === "config") {
+      // Usually a wrong or restricted GEMINI_API_KEY. The owner sees the exact reason
+      // under /admin > Overview > "Test the assistant"; visitors get a clear way forward.
+      console.error("Chat failed: AI key problem", err.message);
+      return Response.json(
+        { error: `Our assistant is offline for a moment. Please email us at ${site.email} or use the enquiry form, and we'll reply personally.` },
+        { status: 503 },
+      );
+    }
     console.error("Chat failed", err);
     return Response.json(
       { error: `Sorry, something went wrong on my side. Please try again, or email us at ${site.email}.` },
