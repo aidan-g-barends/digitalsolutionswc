@@ -41,6 +41,17 @@ export default function Assistant() {
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
+  // True while the enquiry form is on screen: the launcher tucks away so it never
+  // covers the form's fields or its send button (the form is a direct line already).
+  const [tucked, setTucked] = useState(false);
+
+  useEffect(() => {
+    const form = document.getElementById("contact");
+    if (!form) return;
+    const io = new IntersectionObserver(([e]) => setTucked(e.isIntersecting), { rootMargin: "0px 0px -35% 0px" });
+    io.observe(form);
+    return () => io.disconnect();
+  }, []);
 
   // Restore this visit's conversation (sessionStorage = cleared when the tab closes).
   useEffect(() => {
@@ -215,8 +226,18 @@ export default function Assistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ duration: 0.4, ease }}
-            className="fixed bottom-4 right-4 z-[60] flex flex-col items-end gap-3 sm:bottom-6 sm:right-6"
+            // Bottom offset respects the iPhone home bar.
+            className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-[60] sm:bottom-6 sm:right-6"
           >
+            {/* Plain wrapper for hiding: Framer Motion writes opacity as an inline style on the
+                element above, which would override these classes. Hidden while the mobile menu
+                is open (it would cover the menu's button) and slid away while the form is in view. */}
+            <div
+              className={`assistant-launcher flex flex-col items-end gap-3 transition-[opacity,transform] duration-500 ease-[var(--ease-out-expo)] ${
+                tucked ? "pointer-events-none translate-y-6 opacity-0" : ""
+              }`}
+              aria-hidden={tucked || undefined}
+            >
             <AnimatePresence>
               {teaser && (
                 <motion.div
@@ -248,13 +269,15 @@ export default function Assistant() {
               type="button"
               onClick={openChat}
               aria-label="Open the DSWC AI Assistant"
-              className="group relative flex h-14 items-center gap-2.5 rounded-[14px] bg-signal pl-4 pr-5 font-medium text-white shadow-[0_18px_50px_-12px_rgba(79,109,255,0.75)] transition-colors hover:bg-signal-hi"
+              tabIndex={tucked ? -1 : undefined}
+              // Phones: a compact square, so it never sits on top of the text. Larger screens: icon + label.
+              className="group relative grid h-13 w-13 place-items-center rounded-[12px] bg-signal font-medium text-white shadow-[0_18px_50px_-12px_rgba(79,109,255,0.75)] transition-colors hover:bg-signal-hi sm:flex sm:h-14 sm:w-auto sm:items-center sm:gap-2.5 sm:rounded-[14px] sm:pl-4 sm:pr-5"
             >
-              <span aria-hidden className="absolute inset-0 animate-ping rounded-[14px] bg-signal opacity-20 [animation-duration:3s]" />
+              <span aria-hidden className="absolute inset-0 animate-ping rounded-[inherit] bg-signal opacity-20 [animation-duration:3s]" />
               <Sparkles className="relative h-5 w-5" />
               <span className="relative hidden sm:inline">Ask our AI</span>
-              <span className="relative sm:hidden">Ask AI</span>
             </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

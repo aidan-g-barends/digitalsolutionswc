@@ -225,3 +225,9 @@ select option:disabled {
   from { transform: translateY(-50%) scaleX(0); }
   to { transform: translateY(-50%) scaleX(1); }
 }
+
+/* While the mobile menu is open, the floating AI button steps aside (it would cover the menu's button). */
+body:has(#mobile-menu) .assistant-launcher {
+  opacity: 0;
+  pointer-events: none;
+}
