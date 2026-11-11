@@ -110,7 +110,7 @@ export function Button({
   children: string;
   className?: string;
   size?: "sm" | "md";
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
   const pad = size === "sm" ? "h-10 pl-4 pr-3 text-sm" : "h-14 pl-6 pr-5 text-[15px]";
   const cell = size === "sm" ? "w-10" : "w-14";

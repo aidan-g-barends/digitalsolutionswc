@@ -33,9 +33,11 @@ export const site: {
 
 export const navLinks = [
   { label: "Work", href: "#work" },
+  { label: "AI", href: "#ai" },
   { label: "Services", href: "#services" },
   { label: "About", href: "#about" },
   { label: "Process", href: "#process" },
+  { label: "FAQ", href: "#faq" },
 ]
 
 export const services: {
@@ -186,6 +188,43 @@ export const reasons = [
   {
     title: "Business-focused thinking",
     body: "We don't just build websites. We build digital tools that support how your business grows.",
+  },
+];
+
+// Shown in the FAQ section, and also given to the AI assistant so it answers the same way.
+// Keep answers honest: no prices or timeframes here unless you've approved them.
+export const faqs = [
+  {
+    q: "How much does a website cost?",
+    a: "It depends on what you need: a five-page business site is a very different job to an online store. After a free consultation you get a clear, fixed quote with no surprises, so you only pay for what your business actually needs.",
+  },
+  {
+    q: "How long does it take?",
+    a: "You get a realistic timeline in your proposal, based on the size of the project. You'll see progress along the way, not just at the end, and you always know what stage your project is at.",
+  },
+  {
+    q: "Do I need to have everything ready?",
+    a: "No. Bring what you have: a logo, some photos, a few notes about your business. We'll guide you through the rest and help shape the words so they bring in customers.",
+  },
+  {
+    q: "Will it work properly on phones?",
+    a: "Yes. Every site is designed for mobile first, because that's where most of your customers will find you. It's tested on phones, tablets and desktops before launch.",
+  },
+  {
+    q: "Can I make changes to my website later?",
+    a: "Yes. In your consultation we'll talk about how you'd like to manage it: some clients update things themselves, others prefer to send changes to us. We build it the way that suits you.",
+  },
+  {
+    q: "I already have a website. Can you help?",
+    a: "Definitely. We can redesign it, speed it up or rebuild it properly. Send us the link and we'll tell you honestly what's worth keeping.",
+  },
+  {
+    q: "Do you only work with businesses in the Western Cape?",
+    a: "No. We're based in the Western Cape and work with businesses across South Africa. Most of the process happens online, so distance is never a problem.",
+  },
+  {
+    q: "Can you add an AI assistant like this one to my website?",
+    a: "Yes. It answers questions about your business, captures leads and can book meetings, all based on your own services. Ask about it in your free consultation.",
   },
 ];
 

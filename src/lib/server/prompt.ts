@@ -4,7 +4,7 @@
  * pricing / business info / FAQs you edit in /admin. So the AI never relies on
  * facts that aren't written down here.
  */
-import { projects, reasons, services, site, steps } from "@/lib/site";
+import { faqs, projects, reasons, services, site, steps } from "@/lib/site";
 import type { Availability, Knowledge } from "./settings";
 
 const DAY = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -118,7 +118,10 @@ ${why}
 
 ${pricing}
 ${knowledge.business.trim() ? `\n# MORE ABOUT THE BUSINESS (approved)\n${knowledge.business.trim()}` : ""}
-${knowledge.faqs.trim() ? `\n# FAQS (approved answers)\n${knowledge.faqs.trim()}` : ""}
+
+# FAQS (approved answers from the website)
+${faqs.map((f) => `Q: ${f.q}\nA: ${f.a}`).join("\n")}
+${knowledge.faqs.trim() ? `\n# MORE FAQS (approved answers)\n${knowledge.faqs.trim()}` : ""}
 
 # CONTACT
 Email: ${site.email}${site.phone ? `\nPhone: ${site.phone}` : ""}${site.whatsapp ? `\nWhatsApp: +${site.whatsapp}` : ""}

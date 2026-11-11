@@ -6,6 +6,8 @@ import About from "@/components/About";
 import Process from "@/components/Process";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import AiShowcase from "@/components/AiShowcase";
+import Faq from "@/components/Faq";
 import Assistant from "@/components/assistant/Assistant";
 
 // Proof comes straight after the hero: visitors see real work before anything else.
@@ -22,9 +24,11 @@ export default function Home() {
       <main id="main">
         <Hero />
         <Work />
+        <AiShowcase />
         <Services />
         <About />
         <Process />
+        <Faq />
         <Contact />
       </main>
       <Footer />

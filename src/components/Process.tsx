@@ -23,7 +23,7 @@ export default function Process() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <Label index="04">How it works</Label>
+            <Label index="05">How it works</Label>
             <SplitHeading text="From first chat to launch day." className="display mt-6 text-[clamp(2.8rem,6vw,5.6rem)]" />
           </div>
           <Reveal delay={0.15} className="lg:col-span-4 lg:col-start-9">
