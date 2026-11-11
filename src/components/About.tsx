@@ -15,7 +15,7 @@ export default function About() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Label index="04">Why work with us</Label>
+            <Label index="05">Why work with us</Label>
             <SplitHeading text="You talk to the person building your site." className="display mt-6 text-[clamp(2.2rem,3.6vw,3.2rem)]" />
             <Reveal delay={0.15}>
               <p className="mt-6 max-w-sm leading-relaxed text-soft">

@@ -60,7 +60,7 @@ export default function Contact() {
     <section id="contact" className="bg-paper-2 py-24 text-ink sm:py-32">
       <div className="mx-auto grid max-w-7xl gap-16 px-5 sm:px-8 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <Label index="07">Start a project</Label>
+          <Label index="08">Start a project</Label>
           <SplitHeading
             text="Let's build something that sets your business apart."
             accent={["apart."]}

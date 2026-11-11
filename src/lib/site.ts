@@ -35,7 +35,7 @@ export const navLinks = [
   { label: "Work", href: "#work" },
   { label: "AI", href: "#ai" },
   { label: "Services", href: "#services" },
-  { label: "About", href: "#about" },
+  { label: "Pricing", href: "#pricing" },
   { label: "Process", href: "#process" },
   { label: "FAQ", href: "#faq" },
 ]
@@ -196,7 +196,7 @@ export const reasons = [
 export const faqs = [
   {
     q: "How much does a website cost?",
-    a: "It depends on what you need: a five-page business site is a very different job to an online store. After a free consultation you get a clear, fixed quote with no surprises, so you only pay for what your business actually needs.",
+    a: "Most projects cost between R2,500 and R30,000. A simple one-page site sits at the lower end; an online store or custom web app sits higher. After a free consultation you get a clear, fixed quote with no surprises, so you only pay for what your business actually needs.",
   },
   {
     q: "How long does it take?",
@@ -273,6 +273,36 @@ export const nextSteps = [
   "A short call to talk through your business and what you need.",
   "A clear proposal with scope, timeline and price. No obligation.",
 ];
+
+// Approved price range (shown in the Pricing section and given to the AI assistant).
+export const pricing = {
+  from: 2500,
+  to: 30000,
+  // A rough guide to where common projects land on the scale (0 = R2,500, 1 = R30,000).
+  // Indicative only: every client gets a fixed quote after the consultation.
+  guide: [
+    { label: "One-page website", at: 0.04 },
+    { label: "Business website", at: 0.3 },
+    { label: "Online store", at: 0.62 },
+    { label: "Web app or custom system", at: 0.94 },
+  ],
+  drivers: [
+    "How many pages and sections you need",
+    "Features like bookings, payments or accounts",
+    "Selling online: products, checkout and delivery",
+    "Custom systems, dashboards and integrations",
+    "Help with writing and preparing your content",
+  ],
+  included: [
+    "Designed for phones first",
+    "Fast loading and basic SEO setup",
+    "Launch on your own domain",
+    "Direct contact with your developer",
+  ],
+};
+
+// 30000 → "R30,000" (same on server and browser, no locale surprises).
+export const rand = (n: number) => `R${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
 
 export const budgetOptions = [
   "Not sure yet",

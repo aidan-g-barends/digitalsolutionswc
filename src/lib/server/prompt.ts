@@ -4,7 +4,7 @@
  * pricing / business info / FAQs you edit in /admin. So the AI never relies on
  * facts that aren't written down here.
  */
-import { faqs, projects, reasons, services, site, steps } from "@/lib/site";
+import { faqs, pricing as priceRange, projects, rand, reasons, services, site, steps } from "@/lib/site";
 import type { Availability, Knowledge } from "./settings";
 
 const DAY = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -47,9 +47,14 @@ export function buildSystemPrompt({
   const why = reasons.map((r) => `- ${r.title}: ${r.body}`).join("\n");
   const days = availability.days.map((d) => DAY[d]).join(", ");
 
-  const pricing = knowledge.pricing.trim()
-    ? `APPROVED PRICING (the ONLY prices you may ever mention, quote them exactly as written):\n${knowledge.pricing.trim()}`
-    : `PRICING: No prices have been approved yet. NEVER give a price, range, estimate or "starting from" figure, even if pushed. Explain that every project is quoted on scope after a short free consultation, so the client only pays for what they need, and offer to set that up.`;
+  // The approved range from site.ts is always allowed; anything extra comes from /admin.
+  const pricing = `APPROVED PRICING (the ONLY figures you may ever mention):
+- Projects range from ${rand(priceRange.from)} to ${rand(priceRange.to)}, depending on scope.
+- Rough guide (lower to higher): ${priceRange.guide.map((g) => g.label).join(", then ")}. A one-page site sits near the lower end; an online store or custom web app sits higher.
+- What moves the price: ${priceRange.drivers.join("; ")}.
+- Every client gets a clear, FIXED quote after a free consultation. Never give a specific number for their project yourself: give the range, say where projects like theirs usually sit (lower, middle or higher end), and offer the free consultation to get their exact quote.${
+    knowledge.pricing.trim() ? `\n- More approved pricing details (quote exactly as written):\n${knowledge.pricing.trim()}` : ""
+  }`;
 
   return `You are "DSWC AI Assistant", the virtual sales representative on the website of ${site.name}, an independent web studio in the Western Cape, South Africa, that works with businesses across South Africa.
 Right now it is ${now.text} (South African time, SAST). Today's date is ${now.iso}.

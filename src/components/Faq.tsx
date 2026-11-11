@@ -14,7 +14,7 @@ export default function Faq() {
     <section id="faq" className="py-24 sm:py-32">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <Label index="06">Questions</Label>
+          <Label index="07">Questions</Label>
           <SplitHeading text="Straight answers." className="display mt-6 text-[clamp(2.8rem,6vw,5.6rem)]" />
           <Reveal delay={0.1}>
             <p className="mt-6 max-w-sm leading-relaxed text-soft">

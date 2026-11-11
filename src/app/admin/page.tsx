@@ -648,7 +648,7 @@ function KnowledgeTab() {
         {field(
           "pricing",
           "Approved pricing",
-          "The ONLY prices the AI will ever mention, exactly as you write them. Leave empty and it won't quote any prices; it will offer a free consultation instead.",
+          "Extra pricing details the AI may quote, exactly as you write them. The AI already knows your R2,500 to R30,000 range (set in src/lib/site.ts) and always offers a free consultation for an exact quote.",
           "e.g.\nBusiness website (up to 5 pages): from R4,500\nOnline store: from R9,000\nMonthly hosting & support: R350/month",
         )}
         {field(
