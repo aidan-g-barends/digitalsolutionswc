@@ -91,6 +91,7 @@ as $$
         channel = case when p_channel = 'voice' then 'voice' else public.conversations.channel end;
 $$;
 revoke all on function public.track_conversation(text, text) from public, anon, authenticated;
+grant execute on function public.track_conversation(text, text) to service_role;
 
 -- Keep updated_at fresh on leads.
 create or replace function public.touch_updated_at()

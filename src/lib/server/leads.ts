@@ -130,6 +130,7 @@ export async function upsertChatLead(
   conversationId: string,
   channel: "chat" | "voice",
   input: LeadInput,
+  { notify = true }: { notify?: boolean } = {},
 ): Promise<{ id: string | null; status: LeadStatus }> {
   let existing: Lead | null = null;
   if (dbEnabled()) {
@@ -164,7 +165,11 @@ export async function upsertChatLead(
 
   // Email you: when a lead first leaves contact details, and when it becomes qualified.
   const key = id ?? conversationId;
-  if (hasContact(merged) && shouldNotify(key, "contact")) {
+  if (!notify) {
+    // The caller sends its own email (e.g. a booking). Mark these as done so we don't send them later.
+    shouldNotify(key, "contact");
+    shouldNotify(key, "qualified");
+  } else if (hasContact(merged) && shouldNotify(key, "contact")) {
     await notifyOwner(merged, "New lead from your website");
   } else if (RANK[status] >= RANK.qualified && (!existing || RANK[existing.status] < RANK.qualified) && shouldNotify(key, "qualified")) {
     await notifyOwner(merged, "Qualified lead from your website");
