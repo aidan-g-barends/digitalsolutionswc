@@ -1,5 +1,6 @@
 "use client";
 
+import { Tilt } from "./Depth";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
@@ -110,7 +111,7 @@ function CaseStudy({ project: p, index, total, stack }: { project: Project; inde
         </div>
 
         {/* Three real screens of the live site, fanned out. */}
-        <div className="relative h-[24rem] overflow-hidden sm:h-[34rem] lg:col-span-7 lg:h-auto">
+        <Tilt max={5} className="relative h-[24rem] overflow-hidden sm:h-[34rem] lg:col-span-7 lg:h-auto">
           <div aria-hidden className="absolute inset-0 opacity-[0.08]" style={{ background: `radial-gradient(circle at 60% 40%, ${p.colors.accent}, transparent 60%)` }} />
           <motion.div style={{ y: y1 }} className="absolute left-[2%] top-[16%] w-[38%] -rotate-[5deg] sm:w-[30%]">
             <Phone src={p.screens[1].src} alt={p.screens[1].alt} />
@@ -121,7 +122,7 @@ function CaseStudy({ project: p, index, total, stack }: { project: Project; inde
           <motion.div style={{ y: y3 }} className="absolute right-[2%] top-[20%] w-[38%] rotate-[5deg] sm:w-[30%]">
             <Phone src={p.screens[2].src} alt={p.screens[2].alt} />
           </motion.div>
-        </div>
+        </Tilt>
 
         {/* Shade that darkens this card as the next one covers it. */}
         <motion.div aria-hidden style={{ opacity: dim }} className="pointer-events-none absolute inset-0 z-20 bg-paper" />

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { projects } from "@/lib/site";
 import { Button, LocalTime, ease, useStill } from "./ui";
+import { FloatingShapes, Tilt } from "./Depth";
 
 const HEADLINE = ["Websites", "that", "make", "your", "business", "look", "as", "good", "as", "it"];
 const SELECTED = "really is";
@@ -54,6 +55,8 @@ export default function Hero() {
         ))}
       </div>
 
+      <FloatingShapes />
+
       <div className="relative mx-auto grid max-w-7xl gap-y-10 px-5 pb-14 sm:px-8 lg:grid-cols-12 lg:gap-y-0 lg:pb-20">
         {/* Status line */}
         <motion.p
@@ -64,8 +67,8 @@ export default function Hero() {
         >
           <span className="inline-flex items-center gap-2 text-ink">
             <span className="relative flex h-2 w-2" aria-hidden>
-              <span className="absolute inset-0 animate-ping rounded-full bg-[#2f9e5b] opacity-60 [animation-duration:2.4s]" />
-              <span className="relative h-2 w-2 rounded-full bg-[#2f9e5b]" />
+              <span className="absolute inset-0 animate-ping rounded-full bg-ok opacity-60 [animation-duration:2.4s]" />
+              <span className="relative h-2 w-2 rounded-full bg-ok" />
             </span>
             Taking on new projects
           </span>
@@ -109,7 +112,7 @@ export default function Hero() {
                     animate={{ scaleX: 1 }}
                     transition={{ duration: 0.75, delay: 1.45, ease: [0.65, 0, 0.35, 1] }}
                   />
-                  <span className="relative">{SELECTED}</span>
+                  <span className="relative text-white">{SELECTED}</span>
                 </motion.span>
               </span>
               <span className="mask">
@@ -240,7 +243,8 @@ function HeroReel({
           </motion.svg>
         </motion.div>
 
-        {/* Real phone */}
+        {/* Real phone, tilting towards the mouse in 3D */}
+        <Tilt max={10}>
         <motion.a
           href={shot.project.url}
           target="_blank"
@@ -276,6 +280,7 @@ function HeroReel({
             </div>
           </div>
         </motion.a>
+        </Tilt>
       </div>
 
       {/* Caption */}

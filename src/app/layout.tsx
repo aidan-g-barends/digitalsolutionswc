@@ -35,8 +35,15 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#07080a",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#07080a" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f3ef" },
+  ],
 };
+
+// Runs before the page paints: picks the saved theme, or the device's theme on a first visit.
+// Without this, light-mode visitors would see a dark flash on every page load.
+const themeScript = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="dark"}})()`;
 
 // Structured data so Google understands this is a web design business.
 const jsonLd = {
@@ -53,7 +60,11 @@ const jsonLd = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-ZA">
+    // suppressHydrationWarning: the theme script changes data-theme before React loads, on purpose.
+    <html lang="en-ZA" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-full overflow-x-clip">
         <script
           type="application/ld+json"

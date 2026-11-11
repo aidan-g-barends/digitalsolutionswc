@@ -173,7 +173,7 @@ export default function Contact() {
                             data.service === o
                               ? "border-signal bg-signal/10 text-ink"
                               : errors.service
-                                ? "border-red-400/60 text-soft hover:border-ink/40"
+                                ? "border-danger/60 text-soft hover:border-ink/40"
                                 : "border-line-strong text-soft hover:border-ink/40 hover:text-ink"
                           }`}
                         >
@@ -195,7 +195,7 @@ export default function Contact() {
                       ))}
                     </div>
                     {errors.service && (
-                      <p id="e-service" className="mt-2 text-xs text-red-300">
+                      <p id="e-service" className="mt-2 text-xs text-danger">
                         {errors.service}
                       </p>
                     )}
@@ -230,7 +230,7 @@ export default function Contact() {
                   </div>
 
                   {status === "error" && (
-                    <div role="alert" className="flex gap-3 rounded-[5px] border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200 sm:col-span-2">
+                    <div role="alert" className="flex gap-3 rounded-[5px] border border-danger/30 bg-danger/10 p-4 text-sm text-danger sm:col-span-2">
                       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                       <p>
                         {serverError}{" "}
@@ -284,7 +284,7 @@ export default function Contact() {
 // Underlined fields (like a paper form) instead of boxes.
 const inputCls = (err?: string) =>
   `w-full border-0 border-b bg-transparent px-0 py-2.5 text-lg text-ink placeholder:text-mute/70 transition-colors focus:outline-none focus-visible:outline-none ${
-    err ? "border-red-400" : "border-ink/25 hover:border-ink/50 focus:border-ink"
+    err ? "border-danger" : "border-ink/25 hover:border-ink/50 focus:border-ink"
   }`;
 
 // Connects each field to its error message for screen readers.
@@ -319,7 +319,7 @@ function Field({
       </label>
       {children}
       {error && (
-        <p id={`e-${id}`} className="mt-2 text-xs text-red-300">
+        <p id={`e-${id}`} className="mt-2 text-xs text-danger">
           {error}
         </p>
       )}

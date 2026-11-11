@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
 import { navLinks, site } from "@/lib/site";
 import { Button, LocalTime, Logo, ease } from "./ui";
+import ThemeToggle from "./ThemeToggle";
 
 const allLinks = [...navLinks, { label: "Contact", href: "#contact" }];
 
@@ -84,6 +85,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <a
             href="#contact"
             onClick={() => setOpen(false)}

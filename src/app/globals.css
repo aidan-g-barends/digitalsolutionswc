@@ -20,6 +20,8 @@
   --color-line-strong: rgb(255 255 255 / 0.18);
   --color-signal: #4f6dff;
   --color-signal-hi: #6a84ff;
+  --color-danger: #fca5a5;
+  --color-ok: #2f9e5b;
 
   --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
@@ -39,6 +41,45 @@ html {
   scroll-behavior: smooth;
   background: var(--color-paper);
   color-scheme: dark; /* dark scrollbars and dropdowns */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LIGHT THEME
+   Same design system, re-mapped: warm paper background, near-black ink,
+   and a slightly deeper blue so it stays readable on white.
+   The <html data-theme> attribute is set before the page paints
+   (see the script in layout.tsx), so there's no flash of the wrong theme.
+   ───────────────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  --color-paper: #f4f3ef;
+  --color-paper-2: #ecebe5;
+  --color-paper-3: #e3e1d9;
+  --color-ink: #0d0e11;
+  --color-ink-2: #e6e4dd;
+  --color-soft: #484c55;
+  --color-mute: #6c7079;
+  --color-line: rgb(13 14 17 / 0.1);
+  --color-line-dark: rgb(13 14 17 / 0.1);
+  --color-line-strong: rgb(13 14 17 / 0.2);
+  --color-signal: #3552f2;
+  --color-signal-hi: #4a66ff;
+  --color-danger: #c0262d;
+  color-scheme: light;
+}
+:root[data-theme="light"] select {
+  color-scheme: light;
+}
+
+/* Theme switch animation: a circle of the new theme grows out of the toggle
+   (View Transitions API). Browsers without it just cross-fade the colours. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+.theme-fade,
+.theme-fade * {
+  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease !important;
 }
 
 body {
@@ -163,6 +204,16 @@ select option:disabled {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* 3D cubes: slow spin on two axes, plus a gentle float. */
+@keyframes cube-spin {
+  from { transform: rotateX(-24deg) rotateY(0deg); }
+  to { transform: rotateX(-24deg) rotateY(360deg); }
+}
+@keyframes float-y {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -14px; }
 }
 
 /* Hero reel: the current screen's progress tick fills over the slide's duration. */
