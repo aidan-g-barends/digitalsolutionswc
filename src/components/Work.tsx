@@ -1,9 +1,9 @@
 "use client";
 
 import { Tilt } from "./Depth";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { projects, type Project } from "@/lib/site";
 import { Label, Phone, Reveal, SplitHeading, ease, useStill } from "./ui";
 
@@ -113,6 +113,7 @@ function CaseStudy({ project: p, index, total, stack }: { project: Project; inde
         {/* Three real screens of the live site, fanned out. */}
         <Tilt max={5} className="relative h-[24rem] overflow-hidden sm:h-[34rem] lg:col-span-7 lg:h-auto">
           <div aria-hidden className="absolute inset-0 opacity-[0.08]" style={{ background: `radial-gradient(circle at 60% 40%, ${p.colors.accent}, transparent 60%)` }} />
+          <ScreensLink project={p}>
           <motion.div style={{ y: y1 }} className="absolute left-[2%] top-[16%] w-[38%] -rotate-[5deg] sm:w-[30%]">
             <Phone src={p.screens[1].src} alt={p.screens[1].alt} />
           </motion.div>
@@ -122,11 +123,89 @@ function CaseStudy({ project: p, index, total, stack }: { project: Project; inde
           <motion.div style={{ y: y3 }} className="absolute right-[2%] top-[20%] w-[38%] rotate-[5deg] sm:w-[30%]">
             <Phone src={p.screens[2].src} alt={p.screens[2].alt} />
           </motion.div>
+          </ScreensLink>
         </Tilt>
 
         {/* Shade that darkens this card as the next one covers it. */}
         <motion.div aria-hidden style={{ opacity: dim }} className="pointer-events-none absolute inset-0 z-20 bg-paper" />
       </motion.article>
     </div>
+  );
+}
+
+/**
+ * Makes the phone screens a link to the live site. With a mouse, a round "Visit site"
+ * badge in the client's colour follows the pointer, so it's obvious the screens are
+ * clickable. Touch screens get a small static label instead (there's no hover there),
+ * and keyboard users see the badge centred when the link has focus.
+ */
+function ScreensLink({ project: p, children }: { project: Project; children: React.ReactNode }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const [active, setActive] = useState(false);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const spring = { stiffness: 450, damping: 38, mass: 0.5 };
+  const sx = useSpring(x, spring);
+  const sy = useSpring(y, spring);
+
+  function follow(e: React.PointerEvent<HTMLAnchorElement>) {
+    if (e.pointerType !== "mouse" || !ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    x.set(e.clientX - r.left);
+    y.set(e.clientY - r.top);
+  }
+  function centre() {
+    if (!ref.current) return;
+    x.jump(ref.current.offsetWidth / 2);
+    y.jump(ref.current.offsetHeight / 2);
+  }
+
+  return (
+    <a
+      ref={ref}
+      href={p.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Open the live ${p.title} website (${p.domain}) in a new tab`}
+      onPointerEnter={(e) => {
+        if (e.pointerType !== "mouse") return;
+        follow(e);
+        x.jump(x.get());
+        y.jump(y.get());
+        setActive(true);
+      }}
+      onPointerMove={follow}
+      onPointerLeave={() => setActive(false)}
+      onFocus={() => {
+        centre();
+        setActive(true);
+      }}
+      onBlur={() => setActive(false)}
+      className="screens-link absolute inset-0 block focus-visible:outline-offset-[-6px]"
+    >
+      {children}
+      {/* Pointer badge (mouse and keyboard) */}
+      <motion.span
+        aria-hidden
+        style={{ x: sx, y: sy, background: p.colors.accent }}
+        initial={false}
+        animate={{ scale: active ? 1 : 0, opacity: active ? 1 : 0 }}
+        transition={{ duration: 0.45, ease }}
+        className="screens-badge pointer-events-none absolute left-0 top-0 z-30 -ml-12 -mt-12 grid h-24 w-24 place-items-center rounded-full text-center text-[13px] font-medium leading-tight text-white shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)]"
+      >
+        <span>
+          Visit site
+          <ArrowUpRight className="mx-auto mt-0.5 h-4 w-4" />
+        </span>
+      </motion.span>
+      {/* Touch screens: a quiet, static hint */}
+      <span
+        aria-hidden
+        className="tap-hint annot absolute bottom-4 left-1/2 z-30 -translate-x-1/2 whitespace-nowrap rounded-[4px] px-2.5 py-1.5 text-[10px] text-white"
+        style={{ background: p.colors.accent }}
+      >
+        Tap to visit ↗
+      </span>
+    </a>
   );
 }

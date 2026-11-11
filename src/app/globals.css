@@ -231,3 +231,10 @@ body:has(#mobile-menu) .assistant-launcher {
   opacity: 0;
   pointer-events: none;
 }
+
+/* Case-study screens: with a mouse, the "Visit site" badge replaces the cursor;
+   the "Tap to visit" hint is only for touch screens, which can't hover. */
+@media (hover: hover) and (pointer: fine) {
+  .screens-link { cursor: none; }
+  .screens-link .tap-hint { display: none; }
+}
