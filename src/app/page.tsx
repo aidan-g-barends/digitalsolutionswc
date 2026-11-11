@@ -6,6 +6,7 @@ import About from "@/components/About";
 import Process from "@/components/Process";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import Assistant from "@/components/assistant/Assistant";
 
 // Proof comes straight after the hero: visitors see real work before anything else.
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      <Assistant />
     </>
   );
 }

@@ -119,6 +119,10 @@ select option:disabled {
   outline-offset: 3px;
   border-radius: 2px;
 }
+/* For inputs whose wrapper already shows focus (e.g. the chat box border turns blue). */
+.no-ring:focus-visible {
+  outline: none;
+}
 
 /* Display type: Bricolage's width axis set condensed, with the large optical size.
    This gives the headlines an architectural, engineered feel without another font. */

@@ -11,6 +11,7 @@
  */
 import { validateEnquiry, type Enquiry } from "@/lib/enquiry";
 import { site } from "@/lib/site";
+import { saveFormLead } from "@/lib/server/leads";
 
 // Basic spam protection: max 5 enquiries per IP every 10 minutes.
 // (In-memory, so it resets when Vercel starts a fresh server. Good enough for a contact form.)
@@ -114,6 +115,17 @@ export async function POST(request: Request) {
     console.error("Resend request failed", err);
     return Response.json({ error: "We couldn't send your enquiry. Please try again." }, { status: 502 });
   }
+
+  // Also keep the enquiry as a lead in the admin dashboard (skipped if no database is set up).
+  await saveFormLead({
+    name: data.name,
+    email: data.email.toLowerCase(),
+    phone: data.phone || undefined,
+    business_name: data.business || undefined,
+    service: data.service,
+    budget: data.budget || undefined,
+    requirements: data.message.slice(0, 1500),
+  });
 
   return Response.json({ ok: true });
 }

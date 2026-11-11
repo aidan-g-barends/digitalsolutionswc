@@ -12,6 +12,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
       if (!link) return;
+      // Links marked data-assistant open the AI assistant (and still go to #contact without JavaScript).
+      if (link.hasAttribute("data-assistant")) {
+        e.preventDefault();
+        window.dispatchEvent(new Event("dswc:assistant"));
+        return;
+      }
       const id = link.getAttribute("href")!.slice(1);
       const target = id === "top" ? document.body : document.getElementById(id);
       if (!target) return;

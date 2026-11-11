@@ -22,8 +22,8 @@ export default function Services() {
                 From your first professional website to custom software that runs part of your business. If it lives in a
                 browser, we can build it.
               </p>
-              <a href="#contact" className="group mt-8 inline-flex items-center gap-2 font-medium">
-                <span className="link-line">Not sure what you need? Ask us</span>
+              <a href="#contact" data-assistant className="group mt-8 inline-flex items-center gap-2 font-medium">
+                <span className="link-line">Not sure what you need? Ask our AI assistant</span>
                 <span aria-hidden className="text-signal transition-transform duration-500 group-hover:translate-x-1">
                   →
                 </span>
