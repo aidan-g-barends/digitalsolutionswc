@@ -18,7 +18,7 @@ export default function Pricing() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <Label index="04">Pricing</Label>
+            <Label index="03">Pricing</Label>
             <SplitHeading text="Clear prices. No surprises." accent={["Clear"]} className="display mt-6 text-[clamp(2.8rem,6vw,5.6rem)]" />
           </div>
           <Reveal delay={0.15} className="lg:col-span-4 lg:col-start-9">

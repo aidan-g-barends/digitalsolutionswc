@@ -15,7 +15,7 @@ export default function Services() {
       <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
-            <Label index="03">Services</Label>
+            <Label index="02">Services</Label>
             <SplitHeading text="What we can build for you." className="display mt-6 text-[clamp(2.8rem,5.4vw,5rem)]" />
             <Reveal delay={0.15}>
               <p className="mt-8 max-w-sm text-lg leading-relaxed text-soft">

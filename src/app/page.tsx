@@ -6,7 +6,6 @@ import About from "@/components/About";
 import Process from "@/components/Process";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import AiShowcase from "@/components/AiShowcase";
 import Faq from "@/components/Faq";
 import Pricing from "@/components/Pricing";
 import Assistant from "@/components/assistant/Assistant";
@@ -25,7 +24,6 @@ export default function Home() {
       <main id="main">
         <Hero />
         <Work />
-        <AiShowcase />
         <Services />
         <Pricing />
         <About />

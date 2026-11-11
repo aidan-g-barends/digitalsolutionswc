@@ -33,7 +33,6 @@ export const site: {
 
 export const navLinks = [
   { label: "Work", href: "#work" },
-  { label: "AI", href: "#ai" },
   { label: "Services", href: "#services" },
   { label: "Pricing", href: "#pricing" },
   { label: "Process", href: "#process" },
@@ -221,10 +220,6 @@ export const faqs = [
   {
     q: "Do you only work with businesses in the Western Cape?",
     a: "No. We're based in the Western Cape and work with businesses across South Africa. Most of the process happens online, so distance is never a problem.",
-  },
-  {
-    q: "Can you add an AI assistant like this one to my website?",
-    a: "Yes. It answers questions about your business, captures leads and can book meetings, all based on your own services. Ask about it in your free consultation.",
   },
 ];
 
