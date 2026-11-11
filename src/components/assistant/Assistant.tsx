@@ -1,11 +1,12 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUp, RotateCcw, Sparkles, X } from "lucide-react";
+import { ArrowUp, Keyboard, Mic, RotateCcw, Sparkles, Square, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { site } from "@/lib/site";
 import { ease } from "../ui";
-import Markdown from "./Markdown";
+import Markdown, { toSpeech } from "./Markdown";
+import { useVoice, type VoiceState } from "./useVoice";
 
 type Msg = { id: string; role: "user" | "assistant"; text: string; error?: boolean };
 
@@ -34,6 +35,8 @@ export default function Assistant() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [teaser, setTeaser] = useState(false);
+  const [mode, setMode] = useState<"text" | "voice">("text");
+  const [handsFree, setHandsFree] = useState(true);
 
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -149,7 +152,43 @@ export default function Assistant() {
     [messages, conversationId, sending],
   );
 
+  // ── Voice conversation loop: listen → send → speak the reply → listen again (hands-free).
+  const live = useRef({ open, mode, handsFree });
+  useEffect(() => {
+    live.current = { open, mode, handsFree };
+  }, [open, mode, handsFree]);
+
+  const voice = useVoice({
+    onFinal: async (text) => {
+      const reply = await send(text, "voice");
+      if (!reply || !live.current.open || live.current.mode !== "voice") {
+        voice.setState("idle");
+        return;
+      }
+      const finished = await voice.speak(toSpeech(reply));
+      // Only start listening again if the reply was heard in full (not interrupted).
+      if (finished && live.current.handsFree && live.current.open && live.current.mode === "voice") voice.listen();
+    },
+  });
+
+  function startVoice() {
+    setMode("voice");
+    voice.unlockAudio();
+    voice.listen();
+  }
+  function toText() {
+    voice.stopAll();
+    setMode("text");
+    setTimeout(() => inputRef.current?.focus(), 50);
+  }
+  // Closing the window silences everything.
+  useEffect(() => {
+    if (!open) voice.stopAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   function clearChat() {
+    voice.stopAll();
     setMessages([WELCOME]);
     setConversationId(uid());
     setInput("");
@@ -242,8 +281,21 @@ export default function Assistant() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-display text-[15px] font-semibold tracking-tight">DSWC AI Assistant</p>
-                <p className="annot !text-[9.5px] text-mute">Online · replies in seconds</p>
+                <p className="annot !text-[9.5px] text-mute">Online now</p>
               </div>
+              {voice.supported.listen && (
+                <button
+                  type="button"
+                  onClick={() => (mode === "voice" ? toText() : startVoice())}
+                  aria-label={mode === "voice" ? "Switch to typing" : "Switch to voice conversation"}
+                  title={mode === "voice" ? "Type instead" : "Talk to the assistant"}
+                  className={`grid h-9 w-9 place-items-center rounded-[5px] transition-colors ${
+                    mode === "voice" ? "bg-signal text-white" : "text-mute hover:bg-paper-3 hover:text-ink"
+                  }`}
+                >
+                  {mode === "voice" ? <Keyboard className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={clearChat}
@@ -318,7 +370,24 @@ export default function Assistant() {
               )}
             </div>
 
-            {/* Input */}
+            {/* Input: voice panel or text box */}
+            {mode === "voice" ? (
+              <VoicePanel
+                state={voice.state}
+                transcript={voice.transcript}
+                error={voice.error}
+                handsFree={handsFree}
+                onHandsFree={() => setHandsFree((v) => !v)}
+                onOrb={() => {
+                  voice.unlockAudio();
+                  if (voice.state === "listening") voice.stopListening();
+                  else if (voice.state === "thinking") return;
+                  else voice.listen(); // idle, or speaking (tap to interrupt and talk)
+                }}
+                onStop={() => voice.stopAll()}
+                onType={toText}
+              />
+            ) : (
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -341,6 +410,17 @@ export default function Assistant() {
                   placeholder="Ask about websites, prices, timelines..."
                   className="max-h-32 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-[15px] text-ink outline-none placeholder:text-mute no-ring [field-sizing:content]"
                 />
+                {voice.supported.listen && (
+                  <button
+                    type="button"
+                    onClick={startVoice}
+                    aria-label="Talk instead of typing"
+                    title="Talk to the assistant"
+                    className="grid h-10 w-10 shrink-0 place-items-center rounded-[7px] text-mute transition-colors hover:bg-paper-3 hover:text-ink"
+                  >
+                    <Mic className="h-4 w-4" />
+                  </button>
+                )}
                 <button
                   type="submit"
                   disabled={!input.trim() || sending}
@@ -354,9 +434,112 @@ export default function Assistant() {
                 AI assistant. It can make mistakes, so important details are confirmed by our team.
               </p>
             </form>
+            )}
           </motion.section>
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+const VOICE_LABEL: Record<VoiceState, string> = {
+  idle: "Tap to talk",
+  listening: "Listening... tap when you're done",
+  thinking: "Thinking...",
+  speaking: "Speaking. Tap to interrupt",
+};
+
+/** The voice controls: one big button that shows whether the AI is listening, thinking or speaking. */
+function VoicePanel({
+  state,
+  transcript,
+  error,
+  handsFree,
+  onHandsFree,
+  onOrb,
+  onStop,
+  onType,
+}: {
+  state: VoiceState;
+  transcript: string;
+  error: string;
+  handsFree: boolean;
+  onHandsFree: () => void;
+  onOrb: () => void;
+  onStop: () => void;
+  onType: () => void;
+}) {
+  return (
+    <div className="border-t border-line px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-5">
+      <div className="flex flex-col items-center text-center">
+        <button
+          type="button"
+          onClick={onOrb}
+          aria-label={VOICE_LABEL[state]}
+          className="relative grid h-20 w-20 place-items-center rounded-full bg-signal text-white shadow-[0_18px_50px_-12px_rgba(79,109,255,0.8)]"
+        >
+          {/* Listening: rings ripple out, like sound coming in. */}
+          {state === "listening" &&
+            [0, 1].map((i) => (
+              <motion.span
+                key={i}
+                aria-hidden
+                className="absolute inset-0 rounded-full border-2 border-signal"
+                initial={{ scale: 1, opacity: 0.7 }}
+                animate={{ scale: 1.7, opacity: 0 }}
+                transition={{ duration: 1.6, repeat: Infinity, delay: i * 0.8, ease: "easeOut" }}
+              />
+            ))}
+          {/* Thinking: a spinning arc. */}
+          {state === "thinking" && (
+            <motion.span
+              aria-hidden
+              className="absolute -inset-1.5 rounded-full border-2 border-transparent border-t-signal border-r-signal/40"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
+            />
+          )}
+          {/* Speaking: equaliser bars. Otherwise: the mic. */}
+          {state === "speaking" ? (
+            <span aria-hidden className="flex h-7 items-center gap-1">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <motion.span
+                  key={i}
+                  className="w-1 rounded-full bg-white"
+                  animate={{ height: [6, 24, 10, 20, 6] }}
+                  transition={{ duration: 1, repeat: Infinity, delay: i * 0.12 }}
+                />
+              ))}
+            </span>
+          ) : (
+            <Mic className="relative h-7 w-7" />
+          )}
+        </button>
+
+        <p className="annot mt-4 text-soft" aria-live="polite">
+          {VOICE_LABEL[state]}
+        </p>
+        <p className="mt-2 min-h-[2.5rem] max-w-full text-[14px] leading-snug text-mute">
+          {error ? <span className="text-danger">{error}</span> : transcript ? <span className="text-ink">&ldquo;{transcript}&rdquo;</span> : state === "idle" ? "Ask anything, out loud. Answers are read back to you." : ""}
+        </p>
+      </div>
+
+      <div className="mt-3 flex items-center justify-between gap-2 text-[13px]">
+        <label className="flex cursor-pointer items-center gap-2 text-soft">
+          <input type="checkbox" checked={handsFree} onChange={onHandsFree} className="h-4 w-4 accent-[var(--color-signal)]" />
+          Hands-free
+        </label>
+        <div className="flex items-center gap-1">
+          {state !== "idle" && (
+            <button type="button" onClick={onStop} className="flex items-center gap-1.5 rounded-[5px] px-2.5 py-1.5 text-soft hover:bg-paper-3 hover:text-ink">
+              <Square className="h-3.5 w-3.5" /> Stop
+            </button>
+          )}
+          <button type="button" onClick={onType} className="flex items-center gap-1.5 rounded-[5px] px-2.5 py-1.5 text-soft hover:bg-paper-3 hover:text-ink">
+            <Keyboard className="h-3.5 w-3.5" /> Type instead
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

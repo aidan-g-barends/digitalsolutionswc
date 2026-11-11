@@ -100,7 +100,8 @@ export function toSpeech(text: string) {
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/https?:\/\/(www\.)?([^\s/)]+)[^\s)]*/g, "$2")
     .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/^[-*•]\s+/gm, "")
+    // List items become short sentences, so they're read with a pause between them.
+    .replace(/^\s*(?:[-*•]|\d+[.)])\s+(.*?)([.!?:])?\s*$/gm, (_, item: string, end?: string) => `${item}${end ?? "."}`)
     .replace(/^#{1,6}\s+/gm, "")
     .replace(/[*_`#>]/g, "")
     .replace(/\s+/g, " ")
