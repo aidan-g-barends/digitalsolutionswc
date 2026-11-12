@@ -144,10 +144,8 @@ export const projects: Project[] = [
   {
     title: "KNOWNMERCH",
     category: "E-commerce",
-    status: "Pre-launch",
-    // No custom domain yet: this is its Vercel address. Swap both when the domain is live.
-    url: "https://knownmerch.vercel.app/",
-    domain: "knownmerch.vercel.app",
+    url: "https://knownmerch.co.za/",
+    domain: "knownmerch.co.za",
     about: "KNOWNMERCH is a South African online store for bar, braai and kuier gear.",
     built:
       "We designed and built the whole store from scratch, without Shopify: the product catalogue and stock run on Supabase, payments go through Yoco, and the owner manages orders and reviews from their own admin dashboard.",
