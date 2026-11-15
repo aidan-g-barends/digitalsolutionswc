@@ -74,7 +74,7 @@ type Attempt = { ok: true; data: Record<string, unknown>; model: string } | { ok
  * - Key/permission problems stop immediately (another model won't help).
  * - Retired/unknown models, per-model quota limits and server errors move on to the next model.
  */
-async function generate(key: string, body: Record<string, unknown>): Promise<Attempt> {
+async function generate(key: string, body: Record<string, unknown>, trace: string[]): Promise<Attempt> {
   const base = process.env.GEMINI_API_BASE || "https://generativelanguage.googleapis.com";
   let last: Attempt = { ok: false, kind: "failed", message: "No model answered." };
   let allBusy = true;
@@ -85,6 +85,7 @@ async function generate(key: string, body: Record<string, unknown>): Promise<Att
       ...(canSkipThinking(model) ? { maxOutputTokens: 800, thinkingConfig: { thinkingBudget: 0 } } : { maxOutputTokens: 4096 }),
     };
     let res: Response;
+    const t0 = Date.now();
     try {
       res = await fetch(`${base}/v1beta/models/${model}:generateContent`, {
         method: "POST",
@@ -94,11 +95,13 @@ async function generate(key: string, body: Record<string, unknown>): Promise<Att
       });
     } catch (err) {
       console.error(`Gemini request to ${model} failed`, err);
+      trace.push(`${model} error ${Date.now() - t0}ms`);
       allBusy = false;
       last = { ok: false, kind: "failed", message: `Could not reach Google (${model}).` };
       continue;
     }
 
+    trace.push(`${model} ${res.status} ${Date.now() - t0}ms`);
     if (res.ok) {
       workingModel = model;
       return { ok: true, data: await res.json(), model };
@@ -129,7 +132,7 @@ export async function runAssistant({
   history: ChatTurn[];
   tools: Tool[];
   maxSteps?: number;
-}): Promise<{ reply: string; toolsUsed: string[]; model: string }> {
+}): Promise<{ reply: string; toolsUsed: string[]; model: string; trace: string[] }> {
   const key = process.env.GEMINI_API_KEY?.trim();
   if (!key) throw new AiError("GEMINI_API_KEY is not set", "config");
 
@@ -138,6 +141,7 @@ export async function runAssistant({
     parts: [{ text: t.text }],
   }));
   const toolsUsed: string[] = [];
+  const trace: string[] = []; // which models were tried and how long each took
 
   for (let step = 0; step < maxSteps; step++) {
     const body: Record<string, unknown> = {
@@ -149,7 +153,7 @@ export async function runAssistant({
         : {}),
     };
 
-    const attempt = await generate(key, body);
+    const attempt = await generate(key, body, trace);
     if (!attempt.ok) throw new AiError(attempt.message, attempt.kind);
     const data = attempt.data as { candidates?: { content?: { parts?: Part[] }; finishReason?: string }[] };
     const candidate = data.candidates?.[0];
@@ -162,7 +166,7 @@ export async function runAssistant({
         .join("")
         .trim();
       if (!reply) throw new AiError(`Empty reply (${candidate?.finishReason ?? "unknown"})`, "failed");
-      return { reply, toolsUsed, model: attempt.model };
+      return { reply, toolsUsed, model: attempt.model, trace };
     }
 
     // The model wants tools run. Keep its turn exactly as sent (it can include

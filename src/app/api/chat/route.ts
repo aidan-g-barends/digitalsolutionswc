@@ -19,7 +19,18 @@ export const maxDuration = 60;
 const MAX_TURNS = 60; // a very long chat is better handed to a human
 const MAX_CHARS = 1500; // per message
 
+/**
+ * GET /api/chat: a tiny "wake up" call. The chat window sends it the moment a visitor
+ * opens the assistant, so the server (and its cached settings) are ready by the time
+ * they've typed their first message. Without it, the first reply waits for a cold start.
+ */
+export async function GET() {
+  if (aiEnabled()) await getSettings();
+  return Response.json({ ok: true, ai: aiEnabled() }, { headers: { "Cache-Control": "no-store" } });
+}
+
 export async function POST(request: Request) {
+  const started = Date.now();
   if (!aiEnabled()) {
     return Response.json({ error: "offline" }, { status: 503 });
   }
@@ -79,12 +90,17 @@ export async function POST(request: Request) {
   }
 
   const { knowledge, availability } = await getSettings();
+  const settingsMs = Date.now() - started;
   const system = buildSystemPrompt({ knowledge, availability, channel, bookingEnabled: bookingEnabled() });
   const tools = buildTools({ conversationId, channel: channel === "voice" ? "voice" : "chat", availability });
 
   try {
-    const { reply, toolsUsed } = await runAssistant({ system, history, tools });
-    return Response.json({ reply, toolsUsed });
+    const aiStarted = Date.now();
+    const { reply, toolsUsed, trace } = await runAssistant({ system, history, tools });
+    // Server-Timing shows up in the browser's network tab: handy for spotting slow steps.
+    const timing = `settings;dur=${settingsMs}, ai;dur=${Date.now() - aiStarted};desc="${trace.join(" | ")}", total;dur=${Date.now() - started}`;
+    console.log("chat timing", timing, toolsUsed);
+    return Response.json({ reply, toolsUsed }, { headers: { "Server-Timing": timing } });
   } catch (err) {
     if (err instanceof AiError && err.kind === "busy") {
       return Response.json(

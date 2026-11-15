@@ -28,13 +28,15 @@ type Options = {
   body?: unknown;
   /** Supabase "Prefer" header, e.g. "return=representation". */
   prefer?: string;
+  /** Give up after this many milliseconds (so a slow database can't stall a chat reply). */
+  timeoutMs?: number;
 };
 
 /**
  * db("leads?select=*&order=created_at.desc") → rows.
  * Paths are PostgREST paths: table name plus query string filters.
  */
-export async function db<T = unknown>(path: string, { method = "GET", body, prefer }: Options = {}): Promise<T> {
+export async function db<T = unknown>(path: string, { method = "GET", body, prefer, timeoutMs }: Options = {}): Promise<T> {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new DbError("Database is not configured", 503);
@@ -50,6 +52,7 @@ export async function db<T = unknown>(path: string, { method = "GET", body, pref
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
     cache: "no-store",
+    ...(timeoutMs ? { signal: AbortSignal.timeout(timeoutMs) } : {}),
   });
   if (!res.ok) {
     let msg = res.statusText;

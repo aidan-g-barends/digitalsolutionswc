@@ -87,7 +87,16 @@ export default function Assistant() {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, sending, open]);
 
+  // Wakes the server up (see GET /api/chat) so the first reply isn't slowed by a cold start.
+  const warmed = useRef(false);
+  const warmUp = useCallback(() => {
+    if (warmed.current) return;
+    warmed.current = true;
+    fetch("/api/chat", { method: "GET", cache: "no-store" }).catch(() => {});
+  }, []);
+
   const openChat = useCallback(() => {
+    warmUp();
     setOpen(true);
     setTeaser(false);
     try {
@@ -95,7 +104,7 @@ export default function Assistant() {
     } catch {
       /* ignore */
     }
-  }, []);
+  }, [warmUp]);
 
   const closeChat = useCallback(() => {
     setOpen(false);
@@ -268,6 +277,8 @@ export default function Assistant() {
               ref={launcherRef}
               type="button"
               onClick={openChat}
+              onPointerEnter={warmUp}
+              onFocus={warmUp}
               aria-label="Open the DSWC AI Assistant"
               tabIndex={tucked ? -1 : undefined}
               // Phones: a compact square, so it never sits on top of the text. Larger screens: icon + label.

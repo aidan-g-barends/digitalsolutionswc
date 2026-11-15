@@ -41,15 +41,27 @@ export const defaultAvailability: Availability = {
 
 type Settings = { knowledge: Knowledge; availability: Availability };
 
-// Cached for a minute so every chat message doesn't hit the database.
+// Cached so chat replies don't wait on the database. After a minute the cached copy is
+// still used instantly while a fresh copy loads in the background.
 let cache: { at: number; value: Settings } | null = null;
+let refreshing: Promise<Settings> | null = null;
 
 export async function getSettings(): Promise<Settings> {
   if (cache && Date.now() - cache.at < 60_000) return cache.value;
+  if (cache) {
+    refreshing ??= loadSettings().finally(() => (refreshing = null));
+    return cache.value;
+  }
+  refreshing ??= loadSettings().finally(() => (refreshing = null));
+  return refreshing;
+}
+
+async function loadSettings(): Promise<Settings> {
   const value: Settings = { knowledge: { ...defaultKnowledge }, availability: { ...defaultAvailability } };
   if (dbEnabled()) {
     try {
-      const rows = await db<{ key: string; value: unknown }[]>("settings?select=key,value");
+      // Never let a slow database hold up a reply for more than 3 seconds.
+      const rows = await db<{ key: string; value: unknown }[]>("settings?select=key,value", { timeoutMs: 3000 });
       for (const r of rows) {
         if (r.key === "knowledge") value.knowledge = { ...defaultKnowledge, ...(r.value as Partial<Knowledge>) };
         if (r.key === "availability") value.availability = { ...defaultAvailability, ...(r.value as Partial<Availability>) };
