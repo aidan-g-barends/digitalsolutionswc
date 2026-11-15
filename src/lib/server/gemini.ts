@@ -37,7 +37,15 @@ export function aiEnabled() {
 
 // Tried in order after GEMINI_MODEL. The "-latest" aliases are kept current by Google,
 // so the chain keeps working when a dated version is retired.
-const FALLBACK_MODELS = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite", "gemini-flash-lite-latest"];
+// Order = fastest first. Measured Nov 2026: flash-lite-latest answers in about 1 second;
+// flash-latest can stall for 20+ seconds; the dated 2.5 models now return 404 (retired),
+// so they're last and cost only ~0.1s if Google ever brings them back.
+const FALLBACK_MODELS = ["gemini-flash-lite-latest", "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
+
+// A model that hasn't answered in this long is skipped for the next one, so one
+// stalled model can't keep a visitor waiting. The last model in the chain gets longer.
+const STEP_TIMEOUT_MS = 9_000;
+const LAST_TIMEOUT_MS = 20_000;
 
 // The last model that answered. Tried first next time, so we don't repeat failed attempts.
 let workingModel: string | null = null;
@@ -79,7 +87,8 @@ async function generate(key: string, body: Record<string, unknown>, trace: strin
   let last: Attempt = { ok: false, kind: "failed", message: "No model answered." };
   let allBusy = true;
 
-  for (const model of modelChain()) {
+  const chain = modelChain();
+  for (const [i, model] of chain.entries()) {
     const generationConfig = {
       temperature: 0.7,
       ...(canSkipThinking(model) ? { maxOutputTokens: 800, thinkingConfig: { thinkingBudget: 0 } } : { maxOutputTokens: 4096 }),
@@ -91,7 +100,7 @@ async function generate(key: string, body: Record<string, unknown>, trace: strin
         method: "POST",
         headers: { "Content-Type": "application/json", "x-goog-api-key": key },
         body: JSON.stringify({ ...body, generationConfig }),
-        signal: AbortSignal.timeout(25_000),
+        signal: AbortSignal.timeout(i === chain.length - 1 ? LAST_TIMEOUT_MS : STEP_TIMEOUT_MS),
       });
     } catch (err) {
       console.error(`Gemini request to ${model} failed`, err);
