@@ -5,6 +5,7 @@
  * availability. All data comes from /api/admin/*, which checks the login cookie
  * on every request, so nothing here is visible to visitors.
  */
+import { site } from "@/lib/site";
 import { Check, ChevronDown, Loader2, LogOut, RefreshCw, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -145,7 +146,7 @@ function Login({ configured, onDone }: { configured: boolean; onDone: () => void
         }}
         className="w-full max-w-sm rounded-[14px] border border-line-strong bg-paper-2 p-8"
       >
-        <p className="annot text-mute">Digital Solutions WC</p>
+        <p className="annot text-mute">{site.name}</p>
         <h1 className="display mt-3 text-5xl">Admin</h1>
         {!configured && (
           <p className="mt-5 rounded-[5px] bg-danger/10 p-3 text-sm text-danger">
@@ -186,7 +187,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       <header className="sticky top-0 z-20 border-b border-line bg-paper/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
           <Link href="/" className="flex items-center gap-2 whitespace-nowrap">
-            <span className="display text-xl">Digital Solutions</span>
+            <span className="display text-xl">Westline</span>
             <span className="annot text-mute">Admin</span>
           </Link>
           <div className="flex items-center gap-2">

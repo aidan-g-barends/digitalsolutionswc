@@ -1,5 +1,5 @@
 -- ============================================================================
--- Digital Solutions WC: database setup for the AI assistant, leads, bookings
+-- Westline Studio: database setup for the AI assistant, leads, bookings
 -- and admin dashboard.
 --
 -- HOW TO RUN: Supabase dashboard > SQL Editor > New query > paste this whole

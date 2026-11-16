@@ -15,8 +15,8 @@ export const ease = [0.16, 1, 0.3, 1] as const;
 export function Logo() {
   return (
     <a href="#top" className="group inline-flex shrink-0 items-center gap-2 whitespace-nowrap" aria-label={`${site.name}, back to top`}>
-      <span className="display text-[1.2rem] leading-none tracking-[-0.01em] sm:text-[1.35rem]">Digital Solutions</span>
-      <span className="annot mt-[3px] text-[10px] tracking-[0.18em] text-soft">WC</span>
+      <span className="display text-[1.2rem] leading-none tracking-[-0.01em] sm:text-[1.35rem]">Westline</span>
+      <span className="annot mt-[3px] text-[10px] tracking-[0.18em] text-soft">STUDIO</span>
       <span aria-hidden className="mt-[1px] h-[1.15rem] w-[7px] bg-signal group-hover:animate-caret" />
     </a>
   );

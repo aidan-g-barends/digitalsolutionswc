@@ -10,9 +10,9 @@ export const site: {
   email: string; phone: string; whatsapp: string;
   socials: { label: string; href: string }[];
 } = {
-  name: "Digital Solutions WC",
+  name: "Westline Studio",
   // Short label used in the logo mark and small spaces.
-  shortName: "DSWC",
+  shortName: "Westline",
   location: "Western Cape, South Africa",
   description:
     "We design and develop high-performance websites, web applications and digital solutions that help South African businesses stand out, connect with customers and grow online.",

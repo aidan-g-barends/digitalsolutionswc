@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { site } from "@/lib/site";
 
 // The preview image shown when the site is shared on WhatsApp, Facebook, LinkedIn etc.
-export const alt = `${site.name}, websites and digital solutions`;
+export const alt = `${site.name}, websites and web apps`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

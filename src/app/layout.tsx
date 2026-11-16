@@ -7,7 +7,7 @@ import "./globals.css";
 import { site, siteUrl } from "@/lib/site";
 import Providers from "@/components/Providers";
 
-const title = `${site.name} | Websites, Web Apps & Digital Solutions`;
+const title = `${site.name} | Websites & Web Apps in South Africa`;
 
 // SEO: title, description and social share previews.
 export const metadata: Metadata = {
