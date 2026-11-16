@@ -187,7 +187,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       <header className="sticky top-0 z-20 border-b border-line bg-paper/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
           <Link href="/" className="flex items-center gap-2 whitespace-nowrap">
-            <span className="display text-xl">Westline</span>
+            <span className="display text-xl">Kite &amp; Code</span>
             <span className="annot text-mute">Admin</span>
           </Link>
           <div className="flex items-center gap-2">

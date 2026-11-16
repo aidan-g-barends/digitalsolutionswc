@@ -1,6 +1,6 @@
-# Westline Studio
+# Kite & Code
 
-Agency website for Westline Studio. Built with Next.js, TypeScript, Tailwind CSS v4 and Framer Motion.
+Agency website for Kite & Code. Built with Next.js, TypeScript, Tailwind CSS v4 and Framer Motion.
 
 ## Run it locally
 
@@ -92,7 +92,7 @@ Add `ADMIN_PASSWORD` (long and unique), redeploy, then open **/admin** on your s
 - `RESEND_API_KEY` (see "Enquiry form" above) also emails you new leads, qualified leads and
   every booking.
 - **Confirmation emails to clients** need your own sending domain: verify a domain in Resend, then
-  set `CONTACT_FROM_EMAIL`, e.g. `Westline Studio <hello@yourdomain.co.za>`. Until then the
+  set `CONTACT_FROM_EMAIL`, e.g. `Kite & Code <hello@yourdomain.co.za>`. Until then the
   AI tells clients the team will email them to confirm (it never claims an email was sent).
 
 ### 5. Google Calendar (optional)

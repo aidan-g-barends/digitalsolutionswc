@@ -14,7 +14,7 @@ const STORAGE = "dswc-assistant";
 const WELCOME: Msg = {
   id: "welcome",
   role: "assistant",
-  text: `Hi! I'm the **Westline Assistant**. I can tell you what we build, how our process works, and help you plan a website for your business.\n\nWhat kind of business do you run?`,
+  text: `Hi! I'm the **Kite & Code Assistant**. I can tell you what we build, how our process works, and help you plan a website for your business.\n\nWhat kind of business do you run?`,
 };
 const SUGGESTIONS = [
   "I need a website for my business",
@@ -279,7 +279,7 @@ export default function Assistant() {
               onClick={openChat}
               onPointerEnter={warmUp}
               onFocus={warmUp}
-              aria-label="Open the Westline Assistant"
+              aria-label="Open the Kite & Code Assistant"
               tabIndex={tucked ? -1 : undefined}
               // Phones: a compact square, so it never sits on top of the text. Larger screens: icon + label.
               className="group relative grid h-13 w-13 place-items-center rounded-[12px] bg-signal font-medium text-white shadow-[0_18px_50px_-12px_rgba(79,109,255,0.75)] transition-colors hover:bg-signal-hi sm:flex sm:h-14 sm:w-auto sm:items-center sm:gap-2.5 sm:rounded-[14px] sm:pl-4 sm:pr-5"
@@ -299,7 +299,7 @@ export default function Assistant() {
           <motion.section
             role="dialog"
             aria-modal="false"
-            aria-label="Westline Assistant"
+            aria-label="Kite & Code Assistant"
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.96 }}
@@ -314,7 +314,7 @@ export default function Assistant() {
                 <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-paper bg-ok" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-[15px] font-semibold tracking-tight">Westline Assistant</p>
+                <p className="truncate font-display text-[15px] font-semibold tracking-tight">Kite & Code Assistant</p>
                 <p className="annot !text-[9.5px] text-mute">Online now</p>
               </div>
               {voice.supported.listen && (

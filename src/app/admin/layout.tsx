@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 // The dashboard is private: keep it out of Google entirely.
 export const metadata: Metadata = {
-  title: "Admin | Westline Studio",
+  title: "Admin | Kite & Code",
   robots: { index: false, follow: false },
 };
 

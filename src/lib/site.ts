@@ -10,9 +10,9 @@ export const site: {
   email: string; phone: string; whatsapp: string;
   socials: { label: string; href: string }[];
 } = {
-  name: "Westline Studio",
+  name: "Kite & Code",
   // Short label used in the logo mark and small spaces.
-  shortName: "Westline",
+  shortName: "Kite & Code",
   location: "Western Cape, South Africa",
   description:
     "We design and develop high-performance websites, web applications and digital solutions that help South African businesses stand out, connect with customers and grow online.",
