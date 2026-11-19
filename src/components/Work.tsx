@@ -47,6 +47,16 @@ function CaseStudy({ project: p, index, total, stack }: { project: Project; inde
   const y1 = useTransform(scrollYProgress, [0, 1], still ? [0, 0] : [60, -60]);
   const y2 = useTransform(scrollYProgress, [0, 1], still ? [0, 0] : [120, -80]);
   const y3 = useTransform(scrollYProgress, [0, 1], still ? [0, 0] : [90, -40]);
+  // Fan-out: the side phones start tucked behind the middle one and spread out
+  // as the card scrolls into view, like dealing cards. Scrubbed to the scroll,
+  // so scrolling back up tucks them in again.
+  const fan = useTransform(scrollYProgress, [0.05, 0.4], still ? [1, 1] : [0, 1], { clamp: true });
+  const leftX = useTransform(fan, [0, 1], ["70%", "0%"]);
+  const rightX = useTransform(fan, [0, 1], ["-70%", "0%"]);
+  const leftRotate = useTransform(fan, [0, 1], [0, -5]);
+  const rightRotate = useTransform(fan, [0, 1], [0, 5]);
+  const sideScale = useTransform(fan, [0, 1], [0.88, 1]);
+  const centreScale = useTransform(fan, [0, 1], [0.94, 1]);
 
   // While the next card slides over this one, this one sinks back slightly.
   const isLast = index === total - 1;
@@ -114,13 +124,13 @@ function CaseStudy({ project: p, index, total, stack }: { project: Project; inde
         <Tilt max={5} className="relative h-[24rem] overflow-hidden sm:h-[34rem] lg:col-span-7 lg:h-auto">
           <div aria-hidden className="absolute inset-0 opacity-[0.08]" style={{ background: `radial-gradient(circle at 60% 40%, ${p.colors.accent}, transparent 60%)` }} />
           <ScreensLink project={p}>
-          <motion.div style={{ y: y1 }} className="absolute left-[2%] top-[16%] w-[38%] -rotate-[5deg] sm:w-[30%]">
+          <motion.div style={{ y: y1, x: leftX, rotate: leftRotate, scale: sideScale }} className="absolute left-[2%] top-[16%] w-[38%] sm:w-[30%]">
             <Phone src={p.screens[1].src} alt={p.screens[1].alt} />
           </motion.div>
-          <motion.div style={{ y: y2 }} className="absolute left-1/2 top-[6%] z-10 w-[46%] -translate-x-1/2 sm:w-[33%]">
+          <motion.div style={{ y: y2, scale: centreScale }} className="absolute left-1/2 top-[6%] z-10 w-[46%] -translate-x-1/2 sm:w-[33%]">
             <Phone src={p.screens[0].src} alt={p.screens[0].alt} />
           </motion.div>
-          <motion.div style={{ y: y3 }} className="absolute right-[2%] top-[20%] w-[38%] rotate-[5deg] sm:w-[30%]">
+          <motion.div style={{ y: y3, x: rightX, rotate: rightRotate, scale: sideScale }} className="absolute right-[2%] top-[20%] w-[38%] sm:w-[30%]">
             <Phone src={p.screens[2].src} alt={p.screens[2].alt} />
           </motion.div>
           </ScreensLink>
