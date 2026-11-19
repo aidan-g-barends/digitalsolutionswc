@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { projects } from "@/lib/site";
 import { Button, LocalTime, ease, useStill } from "./ui";
 import { FloatingShapes, Tilt } from "./Depth";
+import WaveField from "./WaveField";
 
 const HEADLINE = ["Websites", "that", "make", "your", "business", "look", "as", "good", "as", "it"];
 const SELECTED = "really is";
@@ -55,6 +56,18 @@ export default function Hero() {
         ))}
       </div>
 
+      {/* Interactive WebGL dot field. Masked so it fades out at the edges and
+          stays faint behind the headline (strongest on the right, by the phone). */}
+      <motion.div
+        aria-hidden
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.6, delay: 0.6 }}
+        className="pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_75%_70%_at_68%_45%,black_30%,transparent_80%)]"
+      >
+        <WaveField />
+      </motion.div>
+
       <FloatingShapes />
 
       <div className="relative mx-auto grid max-w-7xl gap-y-10 px-5 pb-14 sm:px-8 lg:grid-cols-12 lg:gap-y-0 lg:pb-20">
@@ -75,6 +88,12 @@ export default function Hero() {
           <span aria-hidden className="hidden text-line-strong sm:inline">/</span>
           <span>
             Western Cape · <LocalTime /> SAST
+          </span>
+          {/* Hint for the dot field: mouse users can bend it, everyone can ripple it. */}
+          <span aria-hidden className="hidden text-line-strong sm:inline">/</span>
+          <span aria-hidden className="hidden sm:inline">
+            <span className="hidden [@media(pointer:fine)]:inline">Move to bend · click to ripple</span>
+            <span className="[@media(pointer:fine)]:hidden">Tap to ripple</span>
           </span>
         </motion.p>
 
