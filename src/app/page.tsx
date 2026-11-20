@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Work from "@/components/Work";
+import SketchToSite from "@/components/SketchToSite";
 import Services from "@/components/Services";
 import About from "@/components/About";
 import Process from "@/components/Process";
@@ -24,6 +25,7 @@ export default function Home() {
       <main id="main">
         <Hero />
         <Work />
+        <SketchToSite />
         <Services />
         <Pricing />
         <About />
