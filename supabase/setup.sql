@@ -110,5 +110,13 @@ alter table public.conversations enable row level security;
 alter table public.bookings enable row level security;
 alter table public.settings enable row level security;
 
+-- Give the website's server (service_role) access to the tables. Newer Supabase
+-- projects no longer grant this automatically, which shows up as
+-- "permission denied for table leads". Visitors (anon) still get nothing.
+grant usage on schema public to service_role;
+grant all on all tables in schema public to service_role;
+grant all on all sequences in schema public to service_role;
+alter default privileges in schema public grant all on tables to service_role;
+
 -- Tell Supabase's API to pick up the new tables straight away.
 notify pgrst, 'reload schema';
