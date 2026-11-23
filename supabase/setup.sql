@@ -109,3 +109,6 @@ alter table public.leads enable row level security;
 alter table public.conversations enable row level security;
 alter table public.bookings enable row level security;
 alter table public.settings enable row level security;
+
+-- Tell Supabase's API to pick up the new tables straight away.
+notify pgrst, 'reload schema';
