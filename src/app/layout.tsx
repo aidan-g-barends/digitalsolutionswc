@@ -6,6 +6,8 @@ import "@fontsource-variable/jetbrains-mono";
 import "./globals.css";
 import { site, siteUrl } from "@/lib/site";
 import Providers from "@/components/Providers";
+// Vercel Analytics: counts visits and where they came from (e.g. the WhatsApp QR code).
+import { Analytics } from "@vercel/analytics/next";
 
 const title = `${site.name} | Websites & Web Apps in South Africa`;
 
@@ -72,6 +74,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
         />
         <Providers>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );
