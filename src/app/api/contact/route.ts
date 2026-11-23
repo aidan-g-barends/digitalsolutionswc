@@ -62,12 +62,28 @@ export async function POST(request: Request) {
     return Response.json({ error: "Too many enquiries. Please try again in a few minutes." }, { status: 429 });
   }
 
+  // 1. Save the enquiry to the admin dashboard FIRST, so it is never lost,
+  //    even if the email step below fails (wrong address, Resend limits, outage).
+  const saved = await saveFormLead({
+    name: data.name,
+    email: data.email.toLowerCase(),
+    phone: data.phone || undefined,
+    business_name: data.business || undefined,
+    service: data.service,
+    budget: data.budget || undefined,
+    requirements: data.message.slice(0, 1500),
+  });
+
+  // 2. Then email it to you. If email fails but the lead was saved, the visitor
+  //    still gets a success message, and you'll see the enquiry in /admin.
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL || site.email;
   const from = process.env.CONTACT_FROM_EMAIL || `${site.name} <onboarding@resend.dev>`;
   if (!apiKey || !to) {
-    console.error("Contact form is not configured: set RESEND_API_KEY (and CONTACT_TO_EMAIL).");
-    return Response.json({ error: "Our form is temporarily unavailable." }, { status: 503 });
+    console.error("Contact email is not configured: set RESEND_API_KEY (and CONTACT_TO_EMAIL).");
+    return saved
+      ? Response.json({ ok: true })
+      : Response.json({ error: "Our form is temporarily unavailable." }, { status: 503 });
   }
 
   const rows: [string, string][] = [
@@ -94,6 +110,7 @@ export async function POST(request: Request) {
     </div>`;
   const text = `${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}\n\nProject:\n${data.message}`;
 
+  let emailed = false;
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -107,25 +124,16 @@ export async function POST(request: Request) {
         text,
       }),
     });
-    if (!res.ok) {
-      console.error("Resend error", res.status, await res.text());
-      return Response.json({ error: "We couldn't send your enquiry. Please try again." }, { status: 502 });
-    }
+    emailed = res.ok;
+    // Resend explains exactly why it refused (e.g. sandbox can only send to your own address).
+    if (!res.ok) console.error("Resend error", res.status, await res.text());
   } catch (err) {
     console.error("Resend request failed", err);
-    return Response.json({ error: "We couldn't send your enquiry. Please try again." }, { status: 502 });
   }
 
-  // Also keep the enquiry as a lead in the admin dashboard (skipped if no database is set up).
-  await saveFormLead({
-    name: data.name,
-    email: data.email.toLowerCase(),
-    phone: data.phone || undefined,
-    business_name: data.business || undefined,
-    service: data.service,
-    budget: data.budget || undefined,
-    requirements: data.message.slice(0, 1500),
-  });
-
+  // Only show an error if the enquiry went nowhere at all.
+  if (!emailed && !saved) {
+    return Response.json({ error: "We couldn't send your enquiry. Please try again." }, { status: 502 });
+  }
   return Response.json({ ok: true });
 }

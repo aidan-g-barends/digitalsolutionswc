@@ -179,11 +179,14 @@ export async function upsertChatLead(
 }
 
 /** Saves a contact-form enquiry as a lead (the email to you is sent by the contact route). */
-export async function saveFormLead(input: LeadInput) {
-  if (!dbEnabled()) return;
+/** Saves a contact-form enquiry. Returns true only if it really landed in the database. */
+export async function saveFormLead(input: LeadInput): Promise<boolean> {
+  if (!dbEnabled()) return false;
   try {
     await db("leads", { method: "POST", body: { ...input, source: "form", status: "interested" } });
+    return true;
   } catch (err) {
     console.error("Could not save form lead", err);
+    return false;
   }
 }
